@@ -11,20 +11,22 @@ class QrTile : TileService() {
         updateTileUi()
     }
 
-    override fun onStartListening() {
-        super.onStartListening()
-        updateTileUi()
-    }
-
-    override fun onClick() {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        startActivityAndCollapse(intent)
-    }
-
     private fun updateTileUi() {
         qsTile.state = Tile.STATE_INACTIVE
         qsTile.updateTile()
+    }
+
+    override fun onClick() {
+        val executeAction = {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            startActivityAndCollapse(intent)
+        }
+        if (isLocked || isSecure) {
+            unlockAndRun(executeAction)
+        } else {
+            executeAction()
+        }
     }
 }
