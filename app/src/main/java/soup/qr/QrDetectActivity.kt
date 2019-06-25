@@ -1,16 +1,17 @@
 package soup.qr
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.DisplayMetrics
 import android.util.Rational
-import android.util.Size
 import android.view.Surface
 import android.view.TextureView
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,10 +19,15 @@ import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
-import java.nio.ByteBuffer
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
+import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import java.util.concurrent.TimeUnit
 
-class MainActivity : AppCompatActivity() {
+class QrDetectActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: TextureView
 
@@ -42,10 +48,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startCamera() {
+        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
+
         val previewConfig = PreviewConfig.Builder()
             .apply {
-                setTargetAspectRatio(Rational(1, 1))
-                setTargetResolution(Size(640, 640))
+                setTargetAspectRatio(screenAspectRatio)
+                setTargetRotation(viewFinder.display.rotation)
             }
             .build()
         val preview = Preview(previewConfig)
@@ -58,24 +67,13 @@ class MainActivity : AppCompatActivity() {
             updateTransform()
         }
 
-        val recognizer = QrCodeRecognizer()
-
-        val imageCaptureConfig = ImageCaptureConfig.Builder()
-            .apply {
-                setTargetAspectRatio(Rational(1, 1))
-                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
-            }
-            .build()
-        val imageCapture = ImageCapture(imageCaptureConfig)
-        findViewById<View>(R.id.captureButton).setOnClickListener {
-            imageCapture.takePicture(recognizer)
-        }
-
+        val recognizer = QrCodeDetector(this)
         val analyzerConfig = ImageAnalysisConfig.Builder()
             .apply {
-                val analyzerThread = HandlerThread("LuminosityAnalysis").apply { start() }
+                val analyzerThread = HandlerThread("QrCodeAnalysis").apply { start() }
                 setCallbackHandler(Handler(analyzerThread.looper))
                 setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+                setTargetRotation(viewFinder.display.rotation)
             }
             .build()
         val analyzerUseCase = ImageAnalysis(analyzerConfig)
@@ -83,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 analyzer = recognizer
             }
 
-        CameraX.bindToLifecycle(this, preview, imageCapture, analyzerUseCase)
+        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
     }
 
     private fun updateTransform() {
@@ -110,7 +108,8 @@ class MainActivity : AppCompatActivity() {
             if (allPermissionsGranted()) {
                 viewFinder.post { startCamera() }
             } else {
-                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
+                    .show()
                 finish()
             }
         }
@@ -120,34 +119,65 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private class QrCodeRecognizer : ImageCapture.OnImageCapturedListener(), ImageAnalysis.Analyzer {
+    private class QrCodeDetector(
+        private val context: Context,
+        private val analyzeMillis: Long = 1000L
+    ) : ImageAnalysis.Analyzer {
 
         private var lastAnalyzedTimestamp = 0L
 
-        override fun onCaptureSuccess(image: ImageProxy, rotationDegrees: Int) {
-            analyze(image, rotationDegrees)
-            super.onCaptureSuccess(image, rotationDegrees)
+        private val detector: FirebaseVisionBarcodeDetector
+
+        init {
+            val options = FirebaseVisionBarcodeDetectorOptions.Builder()
+                .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
+                .build()
+            detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
         }
 
         override fun analyze(image: ImageProxy, rotationDegrees: Int) {
             val currentTimestamp = System.currentTimeMillis()
-            if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.SECONDS.toMillis(1)) {
-                tryToRecognize(image)
+            if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.MILLISECONDS.toMillis(analyzeMillis)) {
                 lastAnalyzedTimestamp = currentTimestamp
+                tryToRecognize(image, rotationDegrees)
             }
         }
 
-        private fun tryToRecognize(image: ImageProxy) {
-            val buffer = image.planes[0].buffer
-            val data = buffer.toByteArray()
-            //TODO: try to recognize
+        private fun tryToRecognize(image: ImageProxy, rotationDegrees: Int) {
+            val y = image.planes[0]
+            val u = image.planes[1]
+            val v = image.planes[2]
+            val Yb = y.buffer.remaining()
+            val Ub = u.buffer.remaining()
+            val Vb = v.buffer.remaining()
+            val data = ByteArray(Yb + Ub + Vb)
+            y.buffer.get(data, 0, Yb)
+            u.buffer.get(data, Yb, Ub)
+            v.buffer.get(data, Yb + Ub, Vb)
+
+            val metadata = FirebaseVisionImageMetadata.Builder()
+                .setFormat(FirebaseVisionImageMetadata.IMAGE_FORMAT_YV12)
+                .setHeight(image.height)
+                .setWidth(image.width)
+                .setRotation(getRotationFrom(rotationDegrees))
+                .build()
+            val labelImage = FirebaseVisionImage.fromByteArray(data, metadata)
+            detector.detectInImage(labelImage)
+                .addOnSuccessListener {
+                    if (it.isNotEmpty()) {
+                        context.startActivity(Intent(context, QrResultActivity::class.java))
+                    }
+                }
         }
 
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()
-            val data = ByteArray(remaining())
-            get(data)
-            return data
+        private fun getRotationFrom(rotationDegrees: Int): Int {
+            return when (rotationDegrees) {
+                0 -> FirebaseVisionImageMetadata.ROTATION_0
+                90 -> FirebaseVisionImageMetadata.ROTATION_90
+                180 -> FirebaseVisionImageMetadata.ROTATION_180
+                270 -> FirebaseVisionImageMetadata.ROTATION_270
+                else -> FirebaseVisionImageMetadata.ROTATION_0
+            }
         }
     }
 

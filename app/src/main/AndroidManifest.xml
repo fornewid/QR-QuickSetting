@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="soup.qr">
 
+    <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -14,8 +15,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <meta-data
+            android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+            android:value="barcode" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".QrDetectActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,6 +31,9 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".QrResultActivity"
+            android:exported="false" />
 
         <service
             android:name=".QrTile"

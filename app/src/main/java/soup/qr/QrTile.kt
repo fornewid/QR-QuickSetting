@@ -23,7 +23,7 @@ class QrTile : TileService() {
 
     override fun onClick() {
         val executeAction = {
-            val intent = Intent(this, MainActivity::class.java).apply {
+            val intent = Intent(this, QrDetectActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivityAndCollapse(intent)
