@@ -11,6 +11,11 @@ class QrTile : TileService() {
         updateTileUi()
     }
 
+    override fun onStartListening() {
+        super.onStartListening()
+        updateTileUi()
+    }
+
     private fun updateTileUi() {
         qsTile.state = Tile.STATE_INACTIVE
         qsTile.updateTile()
