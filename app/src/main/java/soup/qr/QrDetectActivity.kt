@@ -19,21 +19,27 @@ import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
+import androidx.databinding.DataBindingUtil
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import soup.qr.databinding.ActivityMainBinding
 import java.util.concurrent.TimeUnit
 
 class QrDetectActivity : AppCompatActivity() {
 
     private lateinit var viewFinder: TextureView
 
+    private var hintAnimation: QrDetectHintAnimation? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).also {
+            hintAnimation = QrDetectHintAnimation(it)
+        }
         viewFinder = findViewById(R.id.cameraPreview)
 
         if (allPermissionsGranted()) {
@@ -45,6 +51,16 @@ class QrDetectActivity : AppCompatActivity() {
         viewFinder.doOnNextLayout {
             updateTransform()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hintAnimation?.start()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        hintAnimation?.stop()
     }
 
     private fun startCamera() {
