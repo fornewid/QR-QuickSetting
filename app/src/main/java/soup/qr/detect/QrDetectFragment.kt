@@ -16,14 +16,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import soup.qr.databinding.FragmentDetectBinding
-import java.util.concurrent.TimeUnit
+import soup.qr.detector.firebase.FirebaseQrCodeDetector
+import soup.qr.detector.output.QrCode
+import soup.qr.detector.QrCodeDetector
+import timber.log.Timber
 
 class QrDetectFragment : Fragment() {
 
@@ -88,8 +85,21 @@ class QrDetectFragment : Fragment() {
             textureView.updateTransform()
         }
 
-        val recognizer = QrCodeDetector {
-            findNavController().navigate(QrDetectFragmentDirections.actionToDetail(it))
+        val detector = FirebaseQrCodeDetector().apply {
+            setCallback(object : QrCodeDetector.Callback {
+
+                override fun onDetected(qrCode: QrCode) {
+                    Timber.d("onDetected: $this")
+                    findNavController().navigate(
+                        QrDetectFragmentDirections.actionToDetail(
+                            rawValue = qrCode.rawValue
+                        )
+                    )
+                }
+
+                override fun onDetectFailed() {
+                }
+            })
         }
         val analyzerConfig = ImageAnalysisConfig.Builder()
             .apply {
@@ -101,7 +111,7 @@ class QrDetectFragment : Fragment() {
             .build()
         val analyzerUseCase = ImageAnalysis(analyzerConfig)
             .apply {
-                analyzer = recognizer
+                analyzer = QrImageAnalyzer(detector)
             }
 
         CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
@@ -132,8 +142,7 @@ class QrDetectFragment : Fragment() {
             if (allPermissionsGranted(context)) {
                 binding.root.post { startCameraWith(binding.cameraPreview) }
             } else {
-                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
         }
@@ -142,74 +151,6 @@ class QrDetectFragment : Fragment() {
     private fun allPermissionsGranted(context: Context): Boolean {
         return REQUIRED_PERMISSIONS.all {
             ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
-        }
-    }
-
-    private class QrCodeDetector(
-        private val analyzeMillis: Long = 1000L,
-        private val callback: (String) -> Unit
-    ) : ImageAnalysis.Analyzer {
-
-        private var lastAnalyzedTimestamp = 0L
-
-        private val detector: FirebaseVisionBarcodeDetector
-
-        init {
-            val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-                .setBarcodeFormats(
-                    FirebaseVisionBarcode.FORMAT_QR_CODE,
-                    FirebaseVisionBarcode.FORMAT_AZTEC
-                )
-                .build()
-            detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
-        }
-
-        override fun analyze(image: ImageProxy, rotationDegrees: Int) {
-            val currentTimestamp = System.currentTimeMillis()
-            if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.MILLISECONDS.toMillis(
-                    analyzeMillis
-                )
-            ) {
-                lastAnalyzedTimestamp = currentTimestamp
-                tryToRecognize(image, rotationDegrees)
-            }
-        }
-
-        private fun tryToRecognize(image: ImageProxy, rotationDegrees: Int) {
-            val y = image.planes[0]
-            val u = image.planes[1]
-            val v = image.planes[2]
-            val Yb = y.buffer.remaining()
-            val Ub = u.buffer.remaining()
-            val Vb = v.buffer.remaining()
-            val data = ByteArray(Yb + Ub + Vb)
-            y.buffer.get(data, 0, Yb)
-            u.buffer.get(data, Yb, Ub)
-            v.buffer.get(data, Yb + Ub, Vb)
-
-            val metadata = FirebaseVisionImageMetadata.Builder()
-                .setFormat(FirebaseVisionImageMetadata.IMAGE_FORMAT_YV12)
-                .setHeight(image.height)
-                .setWidth(image.width)
-                .setRotation(getRotationFrom(rotationDegrees))
-                .build()
-            val labelImage = FirebaseVisionImage.fromByteArray(data, metadata)
-            detector.detectInImage(labelImage)
-                .addOnSuccessListener {
-                    if (it.isNotEmpty()) {
-                        callback(it.first().displayValue.orEmpty())
-                    }
-                }
-        }
-
-        private fun getRotationFrom(rotationDegrees: Int): Int {
-            return when (rotationDegrees) {
-                0 -> FirebaseVisionImageMetadata.ROTATION_0
-                90 -> FirebaseVisionImageMetadata.ROTATION_90
-                180 -> FirebaseVisionImageMetadata.ROTATION_180
-                270 -> FirebaseVisionImageMetadata.ROTATION_270
-                else -> FirebaseVisionImageMetadata.ROTATION_0
-            }
         }
     }
 
