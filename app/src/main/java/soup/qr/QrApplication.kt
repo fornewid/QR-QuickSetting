@@ -7,8 +7,6 @@ class QrApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
+        LogTracker.install(this)
     }
 }
