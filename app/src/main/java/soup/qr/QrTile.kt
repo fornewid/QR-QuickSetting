@@ -3,7 +3,6 @@ package soup.qr
 import android.content.Intent
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import soup.qr.detect.QrDetectFragment
 
 class QrTile : TileService() {
 
@@ -24,7 +23,7 @@ class QrTile : TileService() {
 
     override fun onClick() {
         val executeAction = {
-            val intent = Intent(this, QrDetectFragment::class.java).apply {
+            val intent = Intent(this, QrActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivityAndCollapse(intent)
