@@ -156,7 +156,10 @@ class QrDetectFragment : Fragment() {
 
         init {
             val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-                .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
+                .setBarcodeFormats(
+                    FirebaseVisionBarcode.FORMAT_QR_CODE,
+                    FirebaseVisionBarcode.FORMAT_AZTEC
+                )
                 .build()
             detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
         }

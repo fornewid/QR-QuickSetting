@@ -12,6 +12,7 @@ class QrDetectHintAnimation(binding: FragmentDetectBinding) {
     private val alphaUpdateListener = ValueAnimator.AnimatorUpdateListener { animation ->
         val alpha = animation.animatedValue as Float
         binding.run {
+            qrHint.alpha = alpha
             qrHint1.alpha = alpha
             qrHint2.alpha = alpha
             qrHint3.alpha = alpha
@@ -40,7 +41,7 @@ class QrDetectHintAnimation(binding: FragmentDetectBinding) {
 
     private fun makeHintAnimator(): Animator {
         val alphaAnimator: ValueAnimator = configureAnimator(
-            ValueAnimator.ofFloat(1f, 0.5f), 1000, alphaUpdateListener
+            ValueAnimator.ofFloat(1f, 0.3f), 1000, alphaUpdateListener
         )
         val sizeAnimator: ValueAnimator = configureAnimator(
             ValueAnimator.ofFloat(0f, maxTranslation), 1000, translationUpdateListener
