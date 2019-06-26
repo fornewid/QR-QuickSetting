@@ -14,18 +14,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+    signingConfigs {
         release {
+            storeFile rootProject.file("signing/app-release.jks")
+            storePassword propOrDef('storePassword', "")
+            keyAlias propOrDef('keyAlias', "")
+            keyPassword propOrDef('keyPassword', "")
+        }
+    }
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
+        release {
+            signingConfig signingConfigs.release
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     dataBinding {
         enabled = true
+    }
+    androidExtensions {
+        experimental = true
     }
 }
 
@@ -51,4 +64,5 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
+
 apply plugin: 'com.google.gms.google-services'
