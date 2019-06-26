@@ -1,8 +1,7 @@
-package soup.qr
+package soup.qr.detect
 
 import android.Manifest
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
@@ -10,46 +9,52 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.DisplayMetrics
 import android.util.Rational
-import android.view.Surface
-import android.view.TextureView
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
-import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import soup.qr.databinding.ActivityMainBinding
+import soup.qr.databinding.FragmentDetectBinding
 import java.util.concurrent.TimeUnit
 
-class QrDetectActivity : AppCompatActivity() {
+class QrDetectFragment : Fragment() {
 
-    private lateinit var viewFinder: TextureView
+    private lateinit var binding: FragmentDetectBinding
 
     private var hintAnimation: QrDetectHintAnimation? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main).also {
-            hintAnimation = QrDetectHintAnimation(it)
-        }
-        viewFinder = findViewById(R.id.cameraPreview)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentDetectBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.initViewState()
+        return binding.root
+    }
 
-        if (allPermissionsGranted()) {
-            viewFinder.post { startCamera() }
+    private fun FragmentDetectBinding.initViewState() {
+        hintAnimation = QrDetectHintAnimation(this)
+
+        val preview = cameraPreview
+        if (allPermissionsGranted(root.context)) {
+            preview.post {
+                startCameraWith(preview)
+            }
         } else {
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-
-        viewFinder.doOnNextLayout {
-            updateTransform()
+        preview.doOnNextLayout {
+            preview.updateTransform()
         }
     }
 
@@ -63,33 +68,35 @@ class QrDetectActivity : AppCompatActivity() {
         hintAnimation?.stop()
     }
 
-    private fun startCamera() {
-        val metrics = DisplayMetrics().also { viewFinder.display.getRealMetrics(it) }
+    private fun startCameraWith(textureView: TextureView) {
+        val metrics = DisplayMetrics().also { textureView.display.getRealMetrics(it) }
         val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
 
         val previewConfig = PreviewConfig.Builder()
             .apply {
                 setTargetAspectRatio(screenAspectRatio)
-                setTargetRotation(viewFinder.display.rotation)
+                setTargetRotation(textureView.display.rotation)
             }
             .build()
         val preview = Preview(previewConfig)
         preview.onPreviewOutputUpdateListener = Preview.OnPreviewOutputUpdateListener {
-            val parent = viewFinder.parent as ViewGroup
-            parent.removeView(viewFinder)
-            parent.addView(viewFinder, 0)
+            val parent = textureView.parent as ViewGroup
+            parent.removeView(textureView)
+            parent.addView(textureView, 0)
 
-            viewFinder.surfaceTexture = it.surfaceTexture
-            updateTransform()
+            textureView.surfaceTexture = it.surfaceTexture
+            textureView.updateTransform()
         }
 
-        val recognizer = QrCodeDetector(this)
+        val recognizer = QrCodeDetector {
+            findNavController().navigate(QrDetectFragmentDirections.actionToDetail(it))
+        }
         val analyzerConfig = ImageAnalysisConfig.Builder()
             .apply {
                 val analyzerThread = HandlerThread("QrCodeAnalysis").apply { start() }
                 setCallbackHandler(Handler(analyzerThread.looper))
                 setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-                setTargetRotation(viewFinder.display.rotation)
+                setTargetRotation(textureView.display.rotation)
             }
             .build()
         val analyzerUseCase = ImageAnalysis(analyzerConfig)
@@ -97,14 +104,14 @@ class QrDetectActivity : AppCompatActivity() {
                 analyzer = recognizer
             }
 
-        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
+        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
     }
 
-    private fun updateTransform() {
+    private fun TextureView.updateTransform() {
         val matrix = Matrix()
-        val centerX = viewFinder.width / 2f
-        val centerY = viewFinder.height / 2f
-        val rotationDegrees = when (viewFinder.display.rotation) {
+        val centerX = width / 2f
+        val centerY = height / 2f
+        val rotationDegrees = when (display.rotation) {
             Surface.ROTATION_0 -> 0
             Surface.ROTATION_90 -> 90
             Surface.ROTATION_180 -> 180
@@ -112,7 +119,7 @@ class QrDetectActivity : AppCompatActivity() {
             else -> return
         }
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
-        viewFinder.setTransform(matrix)
+        setTransform(matrix)
     }
 
     override fun onRequestPermissionsResult(
@@ -121,23 +128,26 @@ class QrDetectActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                viewFinder.post { startCamera() }
+            val context: Context = binding.root.context
+            if (allPermissionsGranted(context)) {
+                binding.root.post { startCameraWith(binding.cameraPreview) }
             } else {
-                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
+                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
                     .show()
-                finish()
+                findNavController().popBackStack()
             }
         }
     }
 
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
+    private fun allPermissionsGranted(context: Context): Boolean {
+        return REQUIRED_PERMISSIONS.all {
+            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
     }
 
     private class QrCodeDetector(
-        private val context: Context,
-        private val analyzeMillis: Long = 1000L
+        private val analyzeMillis: Long = 1000L,
+        private val callback: (String) -> Unit
     ) : ImageAnalysis.Analyzer {
 
         private var lastAnalyzedTimestamp = 0L
@@ -153,7 +163,10 @@ class QrDetectActivity : AppCompatActivity() {
 
         override fun analyze(image: ImageProxy, rotationDegrees: Int) {
             val currentTimestamp = System.currentTimeMillis()
-            if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.MILLISECONDS.toMillis(analyzeMillis)) {
+            if (currentTimestamp - lastAnalyzedTimestamp >= TimeUnit.MILLISECONDS.toMillis(
+                    analyzeMillis
+                )
+            ) {
                 lastAnalyzedTimestamp = currentTimestamp
                 tryToRecognize(image, rotationDegrees)
             }
@@ -181,7 +194,7 @@ class QrDetectActivity : AppCompatActivity() {
             detector.detectInImage(labelImage)
                 .addOnSuccessListener {
                     if (it.isNotEmpty()) {
-                        context.startActivity(Intent(context, QrResultActivity::class.java))
+                        callback(it.first().displayValue.orEmpty())
                     }
                 }
         }

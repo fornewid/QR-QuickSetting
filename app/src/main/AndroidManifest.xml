@@ -20,7 +20,7 @@
             android:value="barcode" />
 
         <activity
-            android:name=".QrDetectActivity"
+            android:name=".QrActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,9 +31,6 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".QrResultActivity"
-            android:exported="false" />
 
         <service
             android:name=".QrTile"

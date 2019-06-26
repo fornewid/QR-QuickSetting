@@ -1,12 +1,13 @@
-package soup.qr
+package soup.qr.detect
 
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
-import soup.qr.databinding.ActivityMainBinding
+import soup.qr.R
+import soup.qr.databinding.FragmentDetectBinding
 
-class QrDetectHintAnimation(binding: ActivityMainBinding) {
+class QrDetectHintAnimation(binding: FragmentDetectBinding) {
 
     private val alphaUpdateListener = ValueAnimator.AnimatorUpdateListener { animation ->
         val alpha = animation.animatedValue as Float
@@ -39,9 +40,11 @@ class QrDetectHintAnimation(binding: ActivityMainBinding) {
 
     private fun makeHintAnimator(): Animator {
         val alphaAnimator: ValueAnimator = configureAnimator(
-            ValueAnimator.ofFloat(1f, 0.5f), 1000, alphaUpdateListener)
+            ValueAnimator.ofFloat(1f, 0.5f), 1000, alphaUpdateListener
+        )
         val sizeAnimator: ValueAnimator = configureAnimator(
-            ValueAnimator.ofFloat(0f, maxTranslation), 1000, translationUpdateListener)
+            ValueAnimator.ofFloat(0f, maxTranslation), 1000, translationUpdateListener
+        )
         return AnimatorSet().apply {
             playTogether(alphaAnimator, sizeAnimator)
         }
