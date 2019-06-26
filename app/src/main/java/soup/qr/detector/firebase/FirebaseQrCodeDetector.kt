@@ -60,6 +60,10 @@ class FirebaseQrCodeDetector : QrCodeDetector {
                         url = barcode.rawValue.orEmpty()
                     )
                     callback?.onDetected(qrCode)
+                } else if (it.isNotEmpty()) {
+                    callback?.onDetectFailed()
+                } else {
+                    callback?.onIdle()
                 }
             }
             .addOnFailureListener {

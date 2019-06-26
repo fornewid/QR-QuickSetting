@@ -8,6 +8,8 @@ interface QrCodeDetector : Detector {
 
     interface Callback {
 
+        fun onIdle()
+
         fun onDetected(qrCode: QrCode)
 
         fun onDetectFailed()

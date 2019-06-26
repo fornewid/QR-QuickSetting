@@ -1,4 +1,4 @@
-package soup.qr.detect
+package soup.qr.ui.detect
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy

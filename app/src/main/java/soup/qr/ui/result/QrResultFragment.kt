@@ -1,4 +1,4 @@
-package soup.qr.result
+package soup.qr.ui.result
 
 import android.content.Intent
 import android.net.Uri

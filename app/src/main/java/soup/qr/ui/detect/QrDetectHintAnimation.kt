@@ -1,13 +1,15 @@
-package soup.qr.detect
+package soup.qr.ui.detect
 
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.animation.AccelerateDecelerateInterpolator
 import soup.qr.R
 import soup.qr.databinding.FragmentDetectBinding
 
-class QrDetectHintAnimation(binding: FragmentDetectBinding) {
+class QrDetectHintAnimation(private val binding: FragmentDetectBinding) {
 
     private val alphaUpdateListener = ValueAnimator.AnimatorUpdateListener { animation ->
         val alpha = animation.animatedValue as Float
@@ -70,5 +72,28 @@ class QrDetectHintAnimation(binding: FragmentDetectBinding) {
 
     fun stop() {
         hintAnimator.pause()
+    }
+
+    fun onIdle() {
+        setColor(Color.WHITE)
+    }
+
+    fun onSuccess() {
+        setColor(Color.WHITE)
+    }
+
+    fun onError() {
+        setColor(Color.RED)
+    }
+
+    private fun setColor(color: Int) {
+        val tint = ColorStateList.valueOf(color)
+        binding.run {
+            qrHint.imageTintList = tint
+            qrHint1.imageTintList = tint
+            qrHint2.imageTintList = tint
+            qrHint3.imageTintList = tint
+            qrHint4.imageTintList = tint
+        }
     }
 }

@@ -1,4 +1,4 @@
-package soup.qr.detect
+package soup.qr.ui.detect
 
 import android.Manifest
 import android.content.Context
@@ -20,7 +20,6 @@ import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.detector.QrCodeDetector
 import soup.qr.detector.firebase.FirebaseQrCodeDetector
 import soup.qr.detector.output.QrCode
-import timber.log.Timber
 
 class QrDetectFragment : Fragment() {
 
@@ -45,10 +44,13 @@ class QrDetectFragment : Fragment() {
         val preview = cameraPreview
         if (allPermissionsGranted(root.context)) {
             preview.post {
-                startCameraWith(preview)
+                startCameraWith()
             }
         } else {
-            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            requestPermissions(
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
+            )
         }
         preview.doOnNextLayout {
             preview.updateTransform()
@@ -65,7 +67,8 @@ class QrDetectFragment : Fragment() {
         hintAnimation?.stop()
     }
 
-    private fun startCameraWith(textureView: TextureView) {
+    private fun FragmentDetectBinding.startCameraWith() {
+        val textureView: TextureView = cameraPreview
         val metrics = DisplayMetrics().also { textureView.display.getRealMetrics(it) }
         val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
 
@@ -88,8 +91,12 @@ class QrDetectFragment : Fragment() {
         val detector = FirebaseQrCodeDetector().apply {
             setCallback(object : QrCodeDetector.Callback {
 
+                override fun onIdle() {
+                    hintAnimation?.onIdle()
+                }
+
                 override fun onDetected(qrCode: QrCode) {
-                    Timber.d("onDetected: $this")
+                    hintAnimation?.onSuccess()
                     findNavController().navigate(
                         QrDetectFragmentDirections.actionToDetail(
                             qrCode = qrCode
@@ -98,6 +105,7 @@ class QrDetectFragment : Fragment() {
                 }
 
                 override fun onDetectFailed() {
+                    hintAnimation?.onError()
                 }
             })
         }
@@ -140,9 +148,12 @@ class QrDetectFragment : Fragment() {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             val context: Context = binding.root.context
             if (allPermissionsGranted(context)) {
-                binding.root.post { startCameraWith(binding.cameraPreview) }
+                binding.root.post {
+                    binding.startCameraWith()
+                }
             } else {
-                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
+                    .show()
                 findNavController().popBackStack()
             }
         }
