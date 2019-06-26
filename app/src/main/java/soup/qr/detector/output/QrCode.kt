@@ -1,5 +1,5 @@
 package soup.qr.detector.output
 
-class QrCode(
-    val rawValue: String
-)
+import android.os.Parcelable
+
+interface QrCode : Parcelable

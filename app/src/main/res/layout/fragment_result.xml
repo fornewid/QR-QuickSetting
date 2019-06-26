@@ -3,30 +3,115 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/resultScene"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".result.QrResultFragment">
 
-        <TextView
-            android:id="@+id/displayText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/captureButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_margin="24dp"
-            android:background="#99FFFFFF"
-            android:src="@drawable/ic_launcher_qr"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/Widget.MaterialComponents.Toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                app:title="@string/title_result"
+                app:titleTextColor="@color/colorGrey" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorBlue"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:id="@+id/displayText"
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:gravity="center"
+                android:textColor="@color/colorGrey"
+                app:layout_constraintBottom_toTopOf="@id/actionButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="ABCDEFGHIJKLMNOP" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/actionButton"
+                style="@style/Widget.MaterialComponents.Button.Icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorCoral"
+                android:paddingStart="16dp"
+                android:paddingEnd="12dp"
+                android:text="@string/action_web"
+                android:textColor="@color/colorGrey"
+                android:textStyle="bold"
+                app:icon="@drawable/ic_action_web"
+                app:iconGravity="end"
+                app:iconPadding="8dp"
+                app:iconTint="@color/colorGrey"
+                app:layout_constraintBottom_toBottomOf="@id/logoTopGuideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/displayText" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/logoTopGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="120dp" />
+
+            <ImageView
+                android:id="@+id/firebase"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_logo_firebase"
+                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
+                app:layout_constraintEnd_toStartOf="@id/plus"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
+
+            <ImageView
+                android:id="@+id/plus"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_logo_add"
+                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
+                app:layout_constraintEnd_toStartOf="@id/ml_kit"
+                app:layout_constraintStart_toEndOf="@id/firebase"
+                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
+
+            <ImageView
+                android:id="@+id/ml_kit"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_logo_ml_kit"
+                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/plus"
+                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/logoBottomGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="20dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

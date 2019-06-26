@@ -25,8 +25,8 @@
         tools:layout="@layout/fragment_result">
 
         <argument
-            android:name="rawValue"
-            app:argType="string" />
+            android:name="qrCode"
+            app:argType="soup.qr.detector.output.QrCode" />
     </fragment>
 
 </navigation>

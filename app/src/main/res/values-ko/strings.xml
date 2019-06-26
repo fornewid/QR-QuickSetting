@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">QR코드</string>
+    <string name="title_result">QR코드 결과</string>
+    <string name="action_web">웹으로 보기</string>
 </resources>

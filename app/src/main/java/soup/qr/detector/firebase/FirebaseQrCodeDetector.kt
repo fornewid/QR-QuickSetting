@@ -6,7 +6,7 @@ import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import soup.qr.detector.QrCodeDetector
 import soup.qr.detector.input.RawImage
-import soup.qr.detector.output.QrCode
+import soup.qr.detector.output.UrlQrCode
 import java.util.concurrent.atomic.AtomicBoolean
 
 class FirebaseQrCodeDetector : QrCodeDetector {
@@ -53,8 +53,13 @@ class FirebaseQrCodeDetector : QrCodeDetector {
     ) {
         coreDetector.detectInImage(FirebaseVisionImage.from(rawImage))
             .addOnSuccessListener {
-                if (it.isNotEmpty()) {
-                    callback?.onDetected(QrCode(it.first().displayValue.orEmpty()))
+                val barcode = it.find { it.valueType == FirebaseVisionBarcode.TYPE_URL }
+                if (barcode != null) {
+                    val qrCode = UrlQrCode(
+                        displayText = barcode.displayValue.orEmpty(),
+                        url = barcode.rawValue.orEmpty()
+                    )
+                    callback?.onDetected(qrCode)
                 }
             }
             .addOnFailureListener {

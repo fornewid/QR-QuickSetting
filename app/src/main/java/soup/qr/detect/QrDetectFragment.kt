@@ -17,9 +17,9 @@ import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import soup.qr.databinding.FragmentDetectBinding
+import soup.qr.detector.QrCodeDetector
 import soup.qr.detector.firebase.FirebaseQrCodeDetector
 import soup.qr.detector.output.QrCode
-import soup.qr.detector.QrCodeDetector
 import timber.log.Timber
 
 class QrDetectFragment : Fragment() {
@@ -92,7 +92,7 @@ class QrDetectFragment : Fragment() {
                     Timber.d("onDetected: $this")
                     findNavController().navigate(
                         QrDetectFragmentDirections.actionToDetail(
-                            rawValue = qrCode.rawValue
+                            qrCode = qrCode
                         )
                     )
                 }
