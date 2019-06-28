@@ -1,7 +1,6 @@
 package soup.qr
 
 import android.app.Application
-import timber.log.Timber
 
 class QrApplication : Application() {
 
