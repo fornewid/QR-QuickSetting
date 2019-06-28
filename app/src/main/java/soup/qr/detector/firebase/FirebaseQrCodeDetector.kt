@@ -22,10 +22,7 @@ class FirebaseQrCodeDetector : QrCodeDetector {
 
     init {
         val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-            .setBarcodeFormats(
-                FirebaseVisionBarcode.FORMAT_QR_CODE,
-                FirebaseVisionBarcode.FORMAT_AZTEC
-            )
+            .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_ALL_FORMATS)
             .build()
         coreDetector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
     }
