@@ -62,6 +62,7 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.google.firebase:firebase-ml-vision:21.0.0'
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
     testImplementation 'junit:junit:4.12'

@@ -29,6 +29,16 @@
             android:background="@color/colorNavy"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <ImageView
+                android:id="@+id/barcodeImage"
+                android:layout_width="@dimen/qr_code_size"
+                android:layout_height="@dimen/qr_code_size"
+                app:layout_constraintBottom_toTopOf="@id/displayText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
             <TextView
                 android:id="@+id/displayText"
                 style="@style/TextAppearance.MaterialComponents.Headline6"
@@ -41,8 +51,7 @@
                 app:layout_constraintBottom_toTopOf="@id/actionButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintTop_toBottomOf="@+id/barcodeImage"
                 tools:text="ABCDEFGHIJKLMNOP" />
 
             <com.google.android.material.button.MaterialButton
