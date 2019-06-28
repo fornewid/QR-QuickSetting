@@ -45,7 +45,7 @@ class QrResultFragment : Fragment() {
 
     private fun ImageView.setBarcodeImage(qrCode: UrlQrCode) {
         val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        val barcodeImage = BarcodeImage.qrCodeFrom(qrCode.displayText, size = size)
+        val barcodeImage = BarcodeImage.qrCodeFrom(qrCode.rawValue, size = size)
         setImageBitmap(barcodeImage)
     }
 }

@@ -53,6 +53,7 @@ class FirebaseQrCodeDetector : QrCodeDetector {
                 val barcode = it.find { it.valueType == FirebaseVisionBarcode.TYPE_URL }
                 if (barcode != null) {
                     val qrCode = UrlQrCode(
+                        rawValue = barcode.rawValue.orEmpty(),
                         displayText = barcode.displayValue.orEmpty(),
                         url = barcode.rawValue.orEmpty()
                     )
