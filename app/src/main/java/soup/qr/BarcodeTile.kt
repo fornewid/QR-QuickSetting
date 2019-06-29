@@ -1,6 +1,7 @@
 package soup.qr
 
 import android.content.Intent
+import android.net.Uri
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 
@@ -23,7 +24,8 @@ class BarcodeTile : TileService() {
 
     override fun onClick() {
         val executeAction = {
-            val intent = Intent(this, BarcodeActivity::class.java).apply {
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("soup://soup.qr/detect")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivityAndCollapse(intent)
