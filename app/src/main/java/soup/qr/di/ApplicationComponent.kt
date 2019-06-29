@@ -3,7 +3,7 @@ package soup.qr.di
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
-import soup.qr.QrApplication
+import soup.qr.BarcodeApplication
 import javax.inject.Singleton
 
 @Singleton
@@ -17,8 +17,8 @@ import javax.inject.Singleton
         LocalDataModule::class
     ]
 )
-interface ApplicationComponent : AndroidInjector<QrApplication> {
+interface ApplicationComponent : AndroidInjector<BarcodeApplication> {
 
     @Component.Factory
-    interface Factory : AndroidInjector.Factory<QrApplication>
+    interface Factory : AndroidInjector.Factory<BarcodeApplication>
 }

@@ -1,8 +1,8 @@
 package soup.qr.core.detector
 
-import soup.qr.model.QrCode
+import soup.qr.model.Barcode
 
-interface QrCodeDetector : Detector {
+interface BarcodeDetector : Detector {
 
     fun setCallback(callback: Callback?)
 
@@ -10,7 +10,7 @@ interface QrCodeDetector : Detector {
 
         fun onIdle()
 
-        fun onDetected(qrCode: QrCode)
+        fun onDetected(barcode: Barcode)
 
         fun onDetectFailed()
     }

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="soup.qr.ui.detect.QrDetectFragment"
+        android:name="soup.qr.ui.detect.BarcodeDetectFragment"
         tools:layout="@layout/fragment_detect">
 
         <action
@@ -16,17 +16,17 @@
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_up"/>
+            app:popExitAnim="@anim/slide_out_up" />
     </fragment>
 
     <fragment
         android:id="@+id/detail"
-        android:name="soup.qr.ui.result.QrResultFragment"
+        android:name="soup.qr.ui.result.BarcodeResultFragment"
         tools:layout="@layout/fragment_result">
 
         <argument
-            android:name="qrCode"
-            app:argType="soup.qr.model.QrCode" />
+            android:name="barcode"
+            app:argType="soup.qr.model.Barcode" />
     </fragment>
 
 </navigation>

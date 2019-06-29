@@ -6,15 +6,15 @@ import dagger.Module
 import dagger.Provides
 import soup.qr.data.local.BarcodeDao
 import soup.qr.data.local.BarcodeDatabase
-import soup.qr.data.local.QrLocalDataSource
-import soup.qr.data.local.QrLocalDataSourceImpl
+import soup.qr.data.local.BarcodeLocalDataSource
+import soup.qr.data.local.BarcodeLocalDataSourceImpl
 
 @Module
 class LocalDataModule {
 
     @Provides
-    fun provideLocalDataSource(dao: BarcodeDao): QrLocalDataSource {
-        return QrLocalDataSourceImpl(dao)
+    fun provideLocalDataSource(dao: BarcodeDao): BarcodeLocalDataSource {
+        return BarcodeLocalDataSourceImpl(dao)
     }
 
     @Provides

@@ -9,7 +9,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import soup.qr.R
 import soup.qr.databinding.FragmentDetectBinding
 
-class QrDetectHintAnimation(private val binding: FragmentDetectBinding) {
+class BarcodeDetectHintAnimation(private val binding: FragmentDetectBinding) {
 
     private val alphaUpdateListener = ValueAnimator.AnimatorUpdateListener { animation ->
         val alpha = animation.animatedValue as Float

@@ -3,13 +3,13 @@ package soup.qr.di
 import android.content.Context
 import dagger.Module
 import dagger.Provides
-import soup.qr.QrApplication
+import soup.qr.BarcodeApplication
 
 @Module
 class ApplicationModule {
 
     @Provides
     fun provideContext(
-        application: QrApplication
+        application: BarcodeApplication
     ): Context = application.applicationContext
 }

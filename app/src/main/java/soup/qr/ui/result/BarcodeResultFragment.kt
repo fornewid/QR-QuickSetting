@@ -14,12 +14,12 @@ import soup.qr.R
 import soup.qr.core.encoder.BarcodeImage
 import soup.qr.databinding.FragmentResultBinding
 import soup.qr.mapper.BarcodeFormatMapper
-import soup.qr.model.QrCode
+import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
 
-class QrResultFragment : BaseFragment() {
+class BarcodeResultFragment : BaseFragment() {
 
-    private val args: QrResultFragmentArgs by navArgs()
+    private val args: BarcodeResultFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,31 +28,31 @@ class QrResultFragment : BaseFragment() {
     ): View? {
         val binding = FragmentResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.render(qrCode = args.qrCode)
+        binding.render(barcode = args.barcode)
         return binding.root
     }
 
-    private fun FragmentResultBinding.render(qrCode: QrCode) {
-        if (qrCode is QrCode.Url) {
-            barcodeImage.setBarcodeImage(qrCode)
-            displayText.text = qrCode.rawValue
+    private fun FragmentResultBinding.render(barcode: Barcode) {
+        if (barcode is Barcode.Url) {
+            barcodeImage.setBarcodeImage(barcode)
+            displayText.text = barcode.rawValue
             actionButton.setOnClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrCode.url)))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(barcode.url)))
             }
         } else {
             findNavController().navigateUp()
         }
     }
 
-    private fun ImageView.setBarcodeImage(qrCode: QrCode) {
+    private fun ImageView.setBarcodeImage(barcode: Barcode) {
         val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        setImageBitmap(createBarcodeImage(qrCode, size = size))
+        setImageBitmap(createBarcodeImage(barcode, size = size))
     }
 
-    private fun createBarcodeImage(qrCode: QrCode, size: Int): Bitmap? {
-        return BarcodeFormatMapper.zxingFormatOf(qrCode.format)
+    private fun createBarcodeImage(barcode: Barcode, size: Int): Bitmap? {
+        return BarcodeFormatMapper.zxingFormatOf(barcode.format)
             ?.let(::BarcodeImage)
-            ?.create(qrCode.rawValue, size)
+            ?.create(barcode.rawValue, size)
     }
 
 }

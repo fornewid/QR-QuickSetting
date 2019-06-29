@@ -4,18 +4,18 @@ import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import soup.qr.core.detector.QrCodeDetector
+import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.input.RawImage
-import soup.qr.model.QrCode
+import soup.qr.model.Barcode
 import java.util.concurrent.atomic.AtomicBoolean
 
-class FirebaseQrCodeDetector : QrCodeDetector {
+class FirebaseBarcodeDetector : BarcodeDetector {
 
     private val coreDetector: FirebaseVisionBarcodeDetector
 
     private val isInDetecting = AtomicBoolean(false)
 
-    private var callback: QrCodeDetector.Callback? = null
+    private var callback: BarcodeDetector.Callback? = null
 
     // workaround
     private var lastDetectTime: Long = 0
@@ -40,7 +40,7 @@ class FirebaseQrCodeDetector : QrCodeDetector {
         }
     }
 
-    override fun setCallback(callback: QrCodeDetector.Callback?) {
+    override fun setCallback(callback: BarcodeDetector.Callback?) {
         this.callback = callback
     }
 
@@ -52,12 +52,12 @@ class FirebaseQrCodeDetector : QrCodeDetector {
             .addOnSuccessListener {
                 val barcode = it.find { it.valueType == FirebaseVisionBarcode.TYPE_URL }
                 if (barcode != null) {
-                    val qrCode = QrCode.Url(
+                    val urlBarcode = Barcode.Url(
                         format = barcode.format,
                         rawValue = barcode.rawValue.orEmpty(),
                         url = barcode.rawValue.orEmpty()
                     )
-                    callback?.onDetected(qrCode)
+                    callback?.onDetected(urlBarcode)
                 } else if (it.isNotEmpty()) {
                     callback?.onDetectFailed()
                 } else {

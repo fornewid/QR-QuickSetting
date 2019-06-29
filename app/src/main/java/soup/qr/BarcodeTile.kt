@@ -4,7 +4,7 @@ import android.content.Intent
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 
-class QrTile : TileService() {
+class BarcodeTile : TileService() {
 
     override fun onTileAdded() {
         super.onTileAdded()
@@ -23,7 +23,7 @@ class QrTile : TileService() {
 
     override fun onClick() {
         val executeAction = {
-            val intent = Intent(this, QrActivity::class.java).apply {
+            val intent = Intent(this, BarcodeActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivityAndCollapse(intent)

@@ -4,7 +4,7 @@ import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 import soup.qr.di.DaggerApplicationComponent
 
-class QrApplication : DaggerApplication() {
+class BarcodeApplication : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()

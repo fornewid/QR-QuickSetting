@@ -15,17 +15,17 @@ import androidx.camera.core.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
 import androidx.navigation.fragment.findNavController
-import soup.qr.core.detector.QrCodeDetector
-import soup.qr.core.detector.firebase.FirebaseQrCodeDetector
+import soup.qr.core.detector.BarcodeDetector
+import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.databinding.FragmentDetectBinding
-import soup.qr.model.QrCode
+import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
 
-class QrDetectFragment : BaseFragment() {
+class BarcodeDetectFragment : BaseFragment() {
 
     private lateinit var binding: FragmentDetectBinding
 
-    private var hintAnimation: QrDetectHintAnimation? = null
+    private var hintAnimation: BarcodeDetectHintAnimation? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +39,7 @@ class QrDetectFragment : BaseFragment() {
     }
 
     private fun FragmentDetectBinding.initViewState() {
-        hintAnimation = QrDetectHintAnimation(this)
+        hintAnimation = BarcodeDetectHintAnimation(this)
 
         val preview = cameraPreview
         if (allPermissionsGranted(root.context)) {
@@ -88,18 +88,18 @@ class QrDetectFragment : BaseFragment() {
             textureView.updateTransform()
         }
 
-        val detector = FirebaseQrCodeDetector().apply {
-            setCallback(object : QrCodeDetector.Callback {
+        val detector = FirebaseBarcodeDetector().apply {
+            setCallback(object : BarcodeDetector.Callback {
 
                 override fun onIdle() {
                     hintAnimation?.onIdle()
                 }
 
-                override fun onDetected(qrCode: QrCode) {
+                override fun onDetected(barcode: Barcode) {
                     hintAnimation?.onSuccess()
                     findNavController().navigate(
-                        QrDetectFragmentDirections.actionToDetail(
-                            qrCode = qrCode
+                        BarcodeDetectFragmentDirections.actionToDetail(
+                            barcode = barcode
                         )
                     )
                 }
@@ -111,7 +111,7 @@ class QrDetectFragment : BaseFragment() {
         }
         val analyzerConfig = ImageAnalysisConfig.Builder()
             .apply {
-                val analyzerThread = HandlerThread("QrCodeAnalysis").apply { start() }
+                val analyzerThread = HandlerThread("BarcodeCodeAnalysis").apply { start() }
                 setCallbackHandler(Handler(analyzerThread.looper))
                 setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
                 setTargetRotation(textureView.display.rotation)
@@ -119,7 +119,7 @@ class QrDetectFragment : BaseFragment() {
             .build()
         val analyzerUseCase = ImageAnalysis(analyzerConfig)
             .apply {
-                analyzer = QrImageAnalyzer(detector)
+                analyzer = BarcodeImageAnalyzer(detector)
             }
 
         CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)

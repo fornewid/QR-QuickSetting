@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 import kotlinx.android.parcel.Parcelize
 
 @Keep
-sealed class QrCode : Parcelable {
+sealed class Barcode : Parcelable {
     abstract val format: Int
     abstract val rawValue: String
 
@@ -13,78 +13,78 @@ sealed class QrCode : Parcelable {
     class Unknown(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
-    class ContactInfoQrCode(
+    class ContactInfo(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
-    class EmailQrCode(
+    class Email(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
-    class IsbnQrCode(
+    class Isbn(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Phone(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Product(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Sms(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Text(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Url(
         override val format: Int,
         override val rawValue: String,
         val url: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class Wifi(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
-    class GeoQrCode(
+    class Geo(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class CalenderEvent(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 
     @Parcelize
     class DriverLicense(
         override val format: Int,
         override val rawValue: String
-    ) : QrCode()
+    ) : Barcode()
 }
