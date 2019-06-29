@@ -1,11 +1,11 @@
-package soup.qr.detector.firebase
+package soup.qr.core.detector.firebase
 
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
-import soup.qr.detector.QrCodeDetector
-import soup.qr.detector.input.RawImage
+import soup.qr.core.detector.QrCodeDetector
+import soup.qr.core.detector.input.RawImage
 import soup.qr.model.QrCode
 import java.util.concurrent.atomic.AtomicBoolean
 

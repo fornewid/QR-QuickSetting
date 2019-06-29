@@ -17,8 +17,8 @@ import androidx.core.view.doOnNextLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import soup.qr.databinding.FragmentDetectBinding
-import soup.qr.detector.QrCodeDetector
-import soup.qr.detector.firebase.FirebaseQrCodeDetector
+import soup.qr.core.detector.QrCodeDetector
+import soup.qr.core.detector.firebase.FirebaseQrCodeDetector
 import soup.qr.model.QrCode
 
 class QrDetectFragment : Fragment() {

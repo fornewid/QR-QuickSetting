@@ -1,4 +1,4 @@
-package soup.qr.detector.input
+package soup.qr.core.detector.input
 
 class RawImage(
     val format: RawImageFormat,

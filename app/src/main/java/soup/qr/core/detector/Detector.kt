@@ -1,6 +1,6 @@
-package soup.qr.detector
+package soup.qr.core.detector
 
-import soup.qr.detector.input.RawImage
+import soup.qr.core.detector.input.RawImage
 
 interface Detector {
 

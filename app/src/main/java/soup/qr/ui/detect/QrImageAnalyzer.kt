@@ -2,9 +2,9 @@ package soup.qr.ui.detect
 
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import soup.qr.detector.QrCodeDetector
-import soup.qr.detector.input.RawImage
-import soup.qr.detector.input.RawImageFormat
+import soup.qr.core.detector.QrCodeDetector
+import soup.qr.core.detector.input.RawImage
+import soup.qr.core.detector.input.RawImageFormat
 
 class QrImageAnalyzer(
     private val detector: QrCodeDetector

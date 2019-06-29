@@ -1,4 +1,4 @@
-package soup.qr.encode
+package soup.qr.core.encoder
 
 import android.graphics.Bitmap
 import com.google.zxing.BarcodeFormat

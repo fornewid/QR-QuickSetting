@@ -1,4 +1,4 @@
-package soup.qr.detector.input
+package soup.qr.core.detector.input
 
 enum class RawImageFormat {
     FORMAT_NV21,

@@ -1,9 +1,9 @@
-package soup.qr.detector.firebase
+package soup.qr.core.detector.firebase
 
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import soup.qr.detector.input.RawImage
-import soup.qr.detector.input.RawImageFormat
+import soup.qr.core.detector.input.RawImage
+import soup.qr.core.detector.input.RawImageFormat
 
 object FirebaseVisionImage {
 

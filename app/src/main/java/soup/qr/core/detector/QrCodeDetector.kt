@@ -1,4 +1,4 @@
-package soup.qr.detector
+package soup.qr.core.detector
 
 import soup.qr.model.QrCode
 

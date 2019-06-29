@@ -13,7 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
 import soup.qr.databinding.FragmentResultBinding
-import soup.qr.encode.BarcodeImage
+import soup.qr.core.encoder.BarcodeImage
 import soup.qr.mapper.BarcodeFormatMapper
 import soup.qr.model.QrCode
 
@@ -33,11 +33,11 @@ class QrResultFragment : Fragment() {
     }
 
     private fun FragmentResultBinding.render(qrCode: QrCode) {
-        if (qrCode is QrCode.Unknown) {
+        if (qrCode is QrCode.Url) {
             barcodeImage.setBarcodeImage(qrCode)
             displayText.text = qrCode.rawValue
             actionButton.setOnClickListener {
-//                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrCode.url)))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(qrCode.url)))
             }
         } else {
             findNavController().navigateUp()

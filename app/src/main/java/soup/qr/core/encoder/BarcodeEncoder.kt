@@ -1,4 +1,4 @@
-package soup.qr.encode
+package soup.qr.core.encoder
 
 import android.graphics.Bitmap
 
@@ -84,7 +84,7 @@ class BarcodeEncoder {
     }
 
     companion object {
-        private const val WHITE: Int = 0xFFFFFFFF.toInt()
-        private const val BLACK: Int = 0xFF000000.toInt()
+        private const val WHITE: Int = 0xFFFFFF
+        private const val BLACK: Int = 0x000000.toInt()
     }
 }
