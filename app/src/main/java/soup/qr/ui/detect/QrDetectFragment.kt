@@ -19,7 +19,7 @@ import androidx.navigation.fragment.findNavController
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.detector.QrCodeDetector
 import soup.qr.detector.firebase.FirebaseQrCodeDetector
-import soup.qr.detector.output.QrCode
+import soup.qr.model.QrCode
 
 class QrDetectFragment : Fragment() {
 

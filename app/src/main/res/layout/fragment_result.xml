@@ -31,8 +31,10 @@
 
             <ImageView
                 android:id="@+id/barcodeImage"
-                android:layout_width="@dimen/qr_code_size"
+                android:layout_width="0dp"
                 android:layout_height="@dimen/qr_code_size"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintBottom_toTopOf="@id/displayText"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

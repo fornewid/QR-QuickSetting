@@ -1,6 +1,6 @@
 package soup.qr.detector
 
-import soup.qr.detector.output.QrCode
+import soup.qr.model.QrCode
 
 interface QrCodeDetector : Detector {
 
