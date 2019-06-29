@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isGone
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
@@ -42,14 +43,14 @@ class BarcodeResultFragment : BaseFragment() {
     }
 
     private fun FragmentResultBinding.render(barcode: Barcode) {
+        barcodeImage.setBarcodeImage(barcode)
+        displayText.text = barcode.rawValue
         if (barcode is Barcode.Url) {
-            barcodeImage.setBarcodeImage(barcode)
-            displayText.text = barcode.rawValue
             actionButton.setOnClickListener {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(barcode.url)))
             }
         } else {
-            findNavController().navigateUp()
+            actionButton.isGone = true
         }
     }
 

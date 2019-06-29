@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import soup.qr.data.BarcodeRepository
+import soup.qr.model.Barcode
+import soup.qr.model.BarcodeHistory
 import soup.qr.ui.BaseViewModel
 import soup.qr.ui.EventLiveData
 import soup.qr.ui.MutableEventLiveData
@@ -22,6 +24,10 @@ class BarcodeHistoryViewModel @Inject constructor(
     val showDetectEvent: EventLiveData<Unit>
         get() = _showDetectEvent
 
+    private val _showResultEvent = MutableEventLiveData<Barcode>()
+    val showResultEvent: EventLiveData<Barcode>
+        get() = _showResultEvent
+
     init {
         repository.getHistories()
             .subscribeOn(Schedulers.io())
@@ -34,5 +40,13 @@ class BarcodeHistoryViewModel @Inject constructor(
 
     fun onDetectClick() {
         _showDetectEvent.event = Unit
+    }
+
+    fun onBarcodeHistoryClick(history: BarcodeHistory) {
+        _showResultEvent.event = history.toBarcode()
+    }
+
+    private fun BarcodeHistory.toBarcode(): Barcode {
+        return Barcode.Unknown(format, rawValue)
     }
 }
