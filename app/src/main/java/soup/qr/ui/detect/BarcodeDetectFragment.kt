@@ -20,6 +20,7 @@ import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
+import soup.qr.utils.observeEvent
 
 class BarcodeDetectFragment : BaseFragment() {
 
@@ -37,6 +38,11 @@ class BarcodeDetectFragment : BaseFragment() {
         binding = FragmentDetectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initViewState()
+        viewModel.showResultEvent.observeEvent(this) {
+            findNavController().navigate(
+                BarcodeDetectFragmentDirections.actionToDetail(barcode = it)
+            )
+        }
         return binding.root
     }
 
@@ -99,11 +105,7 @@ class BarcodeDetectFragment : BaseFragment() {
 
                 override fun onDetected(barcode: Barcode) {
                     hintAnimation?.onSuccess()
-                    findNavController().navigate(
-                        BarcodeDetectFragmentDirections.actionToDetail(
-                            barcode = barcode
-                        )
-                    )
+                    viewModel.onDetected(barcode)
                 }
 
                 override fun onDetectFailed() {

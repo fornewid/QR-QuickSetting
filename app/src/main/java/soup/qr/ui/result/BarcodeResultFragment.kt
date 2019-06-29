@@ -16,10 +16,9 @@ import soup.qr.databinding.FragmentResultBinding
 import soup.qr.mapper.BarcodeFormatMapper
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
+import soup.qr.utils.observeState
 
 class BarcodeResultFragment : BaseFragment() {
-
-    private val args: BarcodeResultFragmentArgs by navArgs()
 
     private val viewModel: BarcodeResultViewModel by viewModel()
 
@@ -30,8 +29,16 @@ class BarcodeResultFragment : BaseFragment() {
     ): View? {
         val binding = FragmentResultBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.render(barcode = args.barcode)
+        viewModel.uiModel.observeState(viewLifecycleOwner) {
+            binding.render(barcode = it)
+        }
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val args: BarcodeResultFragmentArgs by navArgs()
+        viewModel.onCreated(args.barcode)
     }
 
     private fun FragmentResultBinding.render(barcode: Barcode) {
@@ -47,14 +54,13 @@ class BarcodeResultFragment : BaseFragment() {
     }
 
     private fun ImageView.setBarcodeImage(barcode: Barcode) {
-        val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        setImageBitmap(createBarcodeImage(barcode, size = size))
+        setImageBitmap(createBarcodeImage(barcode))
     }
 
-    private fun createBarcodeImage(barcode: Barcode, size: Int): Bitmap? {
+    private fun View.createBarcodeImage(barcode: Barcode): Bitmap? {
+        val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
         return BarcodeFormatMapper.zxingFormatOf(barcode.format)
             ?.let(::BarcodeImage)
             ?.create(barcode.rawValue, size)
     }
-
 }
