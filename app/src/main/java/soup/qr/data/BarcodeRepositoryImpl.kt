@@ -3,7 +3,7 @@ package soup.qr.data
 import io.reactivex.Completable
 import io.reactivex.Observable
 import soup.qr.data.local.BarcodeLocalDataSource
-import soup.qr.data.local.entity.BarcodeHistory
+import soup.qr.model.BarcodeHistory
 
 class BarcodeRepositoryImpl(
     private val local: BarcodeLocalDataSource

@@ -38,7 +38,7 @@ class BarcodeDetectFragment : BaseFragment() {
         binding = FragmentDetectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initViewState()
-        viewModel.showResultEvent.observeEvent(this) {
+        viewModel.showResultEvent.observeEvent(viewLifecycleOwner) {
             findNavController().navigate(
                 BarcodeDetectFragmentDirections.actionToDetail(barcode = it)
             )
