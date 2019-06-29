@@ -21,6 +21,8 @@ class BarcodeResultFragment : BaseFragment() {
 
     private val args: BarcodeResultFragmentArgs by navArgs()
 
+    private val viewModel: BarcodeResultViewModel by viewModel()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

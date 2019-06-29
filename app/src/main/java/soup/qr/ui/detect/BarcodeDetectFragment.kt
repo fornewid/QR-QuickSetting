@@ -23,6 +23,8 @@ import soup.qr.ui.BaseFragment
 
 class BarcodeDetectFragment : BaseFragment() {
 
+    private val viewModel: BarcodeDetectViewModel by viewModel()
+
     private lateinit var binding: FragmentDetectBinding
 
     private var hintAnimation: BarcodeDetectHintAnimation? = null
