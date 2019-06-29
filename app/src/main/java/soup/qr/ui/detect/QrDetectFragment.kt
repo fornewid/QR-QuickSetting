@@ -14,14 +14,14 @@ import android.widget.Toast
 import androidx.camera.core.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnNextLayout
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.core.detector.QrCodeDetector
 import soup.qr.core.detector.firebase.FirebaseQrCodeDetector
+import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.QrCode
+import soup.qr.ui.BaseFragment
 
-class QrDetectFragment : Fragment() {
+class QrDetectFragment : BaseFragment() {
 
     private lateinit var binding: FragmentDetectBinding
 
