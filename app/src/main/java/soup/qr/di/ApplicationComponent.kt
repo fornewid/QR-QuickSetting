@@ -12,7 +12,9 @@ import javax.inject.Singleton
         AndroidSupportInjectionModule::class,
         ApplicationModule::class,
         UiModule::class,
-        ViewModelModule::class
+        ViewModelModule::class,
+        DataModule::class,
+        LocalDataModule::class
     ]
 )
 interface ApplicationComponent : AndroidInjector<QrApplication> {
