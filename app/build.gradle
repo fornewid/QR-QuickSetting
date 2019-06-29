@@ -87,6 +87,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
+    implementation 'com.airbnb.android:lottie:3.0.7'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

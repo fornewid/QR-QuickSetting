@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">QR퀵세팅</string>
     <string name="tile_name">바코드</string>
-    <string name="title_history">바코드 기록</string>
+    <string name="history_title">바코드 기록</string>
+    <string name="history_description">안녕, 비어있어요!</string>
     <string name="title_result">바코드 결과</string>
     <string name="action_web">웹으로 보기</string>
 </resources>

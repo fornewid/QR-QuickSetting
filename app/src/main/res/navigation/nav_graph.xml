@@ -30,7 +30,9 @@
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_up" />
+            app:popExitAnim="@anim/slide_out_up"
+            app:popUpTo="@id/history"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment
