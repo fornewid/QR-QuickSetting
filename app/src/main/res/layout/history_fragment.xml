@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/historyScene"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="soup.qr.ui.history.BarcodeHistoryFragment">
+
+        <include
+            android:id="@+id/contents"
+            layout="@layout/history_contents" />
+
+        <include
+            android:id="@+id/header"
+            layout="@layout/history_header" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

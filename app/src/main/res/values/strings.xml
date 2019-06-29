@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">QR QuickSetting</string>
     <string name="tile_name">Barcode</string>
+    <string name="title_history">Barcode History</string>
     <string name="title_result">Barcode Result</string>
     <string name="action_web">Go to web</string>
 </resources>

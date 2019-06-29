@@ -1,7 +1,6 @@
 package soup.qr
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import soup.qr.ui.BaseActivity
 
 class BarcodeActivity : BaseActivity() {

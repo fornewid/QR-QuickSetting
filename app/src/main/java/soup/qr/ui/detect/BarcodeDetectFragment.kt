@@ -40,7 +40,7 @@ class BarcodeDetectFragment : BaseFragment() {
         binding.initViewState()
         viewModel.showResultEvent.observeEvent(viewLifecycleOwner) {
             findNavController().navigate(
-                BarcodeDetectFragmentDirections.actionToDetail(barcode = it)
+                BarcodeDetectFragmentDirections.actionToResult(barcode = it)
             )
         }
         return binding.root
