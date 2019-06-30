@@ -3,30 +3,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    app:startDestination="@+id/home">
+    app:startDestination="@+id/history">
 
     <fragment
-        android:id="@+id/home"
-        android:name="soup.qr.ui.detect.QrDetectFragment"
-        tools:layout="@layout/fragment_detect">
+        android:id="@+id/history"
+        android:name="soup.qr.ui.history.BarcodeHistoryFragment"
+        tools:layout="@layout/history_fragment">
 
         <action
-            android:id="@+id/action_to_detail"
-            app:destination="@id/detail"
+            android:id="@+id/action_to_detect"
+            app:destination="@id/detect"
             app:enterAnim="@anim/slide_in_up"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_up"/>
+            app:popExitAnim="@anim/slide_out_up" />
+
+        <action
+            android:id="@+id/action_to_result"
+            app:destination="@id/result"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_up" />
     </fragment>
 
     <fragment
-        android:id="@+id/detail"
-        android:name="soup.qr.ui.result.QrResultFragment"
+        android:id="@+id/detect"
+        android:name="soup.qr.ui.detect.BarcodeDetectFragment"
+        tools:layout="@layout/fragment_detect">
+
+        <action
+            android:id="@+id/action_to_result"
+            app:destination="@id/result"
+            app:enterAnim="@anim/slide_in_up"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_up"
+            app:popUpTo="@id/history"
+            app:popUpToInclusive="false" />
+
+        <deepLink app:uri="soup://soup.qr/detect" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/result"
+        android:name="soup.qr.ui.result.BarcodeResultFragment"
         tools:layout="@layout/fragment_result">
 
         <argument
-            android:name="qrCode"
-            app:argType="soup.qr.detector.output.QrCode" />
+            android:name="barcode"
+            app:argType="soup.qr.model.Barcode" />
     </fragment>
 
 </navigation>
