@@ -55,4 +55,22 @@
             app:argType="soup.qr.model.Barcode" />
     </fragment>
 
+    <fragment
+        android:id="@+id/magnified"
+        android:name="soup.qr.ui.magnified.BarcodeMagnifiedFragment"
+        tools:layout="@layout/magnified_fragment">
+
+        <argument
+            android:name="barcode"
+            app:argType="soup.qr.model.Barcode" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_to_magnified"
+        app:destination="@id/magnified"
+        app:enterAnim="@anim/fade_in"
+        app:exitAnim="@anim/fade_out"
+        app:popEnterAnim="@anim/fade_in"
+        app:popExitAnim="@anim/fade_out" />
+
 </navigation>

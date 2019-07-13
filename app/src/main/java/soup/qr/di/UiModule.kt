@@ -6,6 +6,7 @@ import soup.qr.BarcodeActivity
 import soup.qr.di.scope.ActivityScope
 import soup.qr.di.ui.DetectUiModule
 import soup.qr.di.ui.HistoryUiModule
+import soup.qr.di.ui.MagnifiedUiModule
 import soup.qr.di.ui.ResultUiModule
 
 @Module
@@ -16,7 +17,8 @@ abstract class UiModule {
         modules = [
             HistoryUiModule::class,
             DetectUiModule::class,
-            ResultUiModule::class
+            ResultUiModule::class,
+            MagnifiedUiModule::class
         ]
     )
     abstract fun bindBarcodeActivity(): BarcodeActivity

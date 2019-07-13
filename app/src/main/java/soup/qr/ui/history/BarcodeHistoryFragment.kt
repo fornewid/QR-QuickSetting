@@ -22,9 +22,10 @@ class BarcodeHistoryFragment : BaseFragment() {
         val binding = HistoryFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = viewModel
-        val listAdapter = BarcodeHistoryListAdapter {
-            viewModel.onBarcodeHistoryClick(it)
-        }
+        val listAdapter = BarcodeHistoryListAdapter(
+            clickListener = viewModel::onBarcodeHistoryClick,
+            longClickListener = viewModel::onBarcodeHistoryLongClick
+        )
         binding.contents.listView.adapter = listAdapter
         viewModel.uiModel.observeState(viewLifecycleOwner) {
             listAdapter.submitList(it.items)
@@ -37,6 +38,11 @@ class BarcodeHistoryFragment : BaseFragment() {
         viewModel.showResultEvent.observeEvent(viewLifecycleOwner) {
             findNavController().navigate(
                 BarcodeHistoryFragmentDirections.actionToResult(it)
+            )
+        }
+        viewModel.showMagnifiedEvent.observeEvent(viewLifecycleOwner) {
+            findNavController().navigate(
+                BarcodeHistoryFragmentDirections.actionToMagnified(it)
             )
         }
         return binding.root

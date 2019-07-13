@@ -1,4 +1,4 @@
-package soup.qr.ui.result
+package soup.qr.ui.magnified
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -6,51 +6,37 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.core.view.isGone
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
 import soup.qr.core.encoder.BarcodeImage
-import soup.qr.databinding.FragmentResultBinding
+import soup.qr.databinding.MagnifiedFragmentBinding
 import soup.qr.mapper.BarcodeFormatMapper
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
+import soup.qr.ui.result.BarcodeResultFragmentArgs
 import soup.qr.utils.observeState
-import soup.qr.utils.setOnDebounceClickListener
 
-class BarcodeResultFragment : BaseFragment() {
+class BarcodeMagnifiedFragment : BaseFragment() {
 
-    private val args: BarcodeResultFragmentArgs by navArgs()
-
-    private val viewModel: BarcodeResultViewModel by viewModel()
+    private val viewModel: BarcodeMagnifiedViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentResultBinding.inflate(inflater, container, false)
+        val binding = MagnifiedFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
-        binding.barcodeImage.setOnDebounceClickListener {
-            findNavController().navigate(
-                BarcodeResultFragmentDirections.actionToMagnified(args.barcode)
-            )
-        }
         viewModel.uiModel.observeState(viewLifecycleOwner) {
-            binding.render(barcode = it)
+            binding.barcodeImage.setBarcodeImage(it)
         }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val args: BarcodeResultFragmentArgs by navArgs()
         viewModel.onCreated(args.barcode)
-    }
-
-    private fun FragmentResultBinding.render(barcode: Barcode) {
-        barcodeImage.setBarcodeImage(barcode)
-        displayText.text = barcode.rawValue
-        actionButton.isGone = true
     }
 
     private fun ImageView.setBarcodeImage(barcode: Barcode) {

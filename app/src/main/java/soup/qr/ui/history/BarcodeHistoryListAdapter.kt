@@ -8,13 +8,18 @@ import soup.qr.ui.databinding.DataBindingViewHolder
 import soup.qr.utils.setOnDebounceClickListener
 
 class BarcodeHistoryListAdapter(
-    private val listener: (BarcodeHistory) -> Unit
+    private val clickListener: (BarcodeHistory) -> Unit,
+    private val longClickListener: (BarcodeHistory) -> Unit
 ) : DataBindingAdapter<BarcodeHistory>() {
 
     override fun createViewHolder(binding: ViewDataBinding): DataBindingViewHolder<BarcodeHistory> {
         return super.createViewHolder(binding).apply {
             itemView.setOnDebounceClickListener {
-                getItem(adapterPosition)?.run(listener)
+                getItem(adapterPosition)?.run(clickListener)
+            }
+            itemView.setOnLongClickListener {
+                getItem(adapterPosition)?.run(longClickListener)
+                true
             }
         }
     }

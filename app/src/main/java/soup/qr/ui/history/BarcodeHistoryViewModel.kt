@@ -28,6 +28,10 @@ class BarcodeHistoryViewModel @Inject constructor(
     val showResultEvent: EventLiveData<Barcode>
         get() = _showResultEvent
 
+    private val _showMagnifiedEvent = MutableEventLiveData<Barcode>()
+    val showMagnifiedEvent: EventLiveData<Barcode>
+        get() = _showMagnifiedEvent
+
     init {
         repository.getHistories()
             .subscribeOn(Schedulers.io())
@@ -44,6 +48,10 @@ class BarcodeHistoryViewModel @Inject constructor(
 
     fun onBarcodeHistoryClick(history: BarcodeHistory) {
         _showResultEvent.event = history.toBarcode()
+    }
+
+    fun onBarcodeHistoryLongClick(history: BarcodeHistory) {
+        _showMagnifiedEvent.event = history.toBarcode()
     }
 
     private fun BarcodeHistory.toBarcode(): Barcode {
