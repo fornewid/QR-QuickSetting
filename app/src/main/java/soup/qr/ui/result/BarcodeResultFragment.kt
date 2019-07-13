@@ -1,15 +1,12 @@
 package soup.qr.ui.result
 
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.isGone
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
 import soup.qr.core.encoder.BarcodeImage
@@ -45,13 +42,7 @@ class BarcodeResultFragment : BaseFragment() {
     private fun FragmentResultBinding.render(barcode: Barcode) {
         barcodeImage.setBarcodeImage(barcode)
         displayText.text = barcode.rawValue
-        if (barcode is Barcode.Url) {
-            actionButton.setOnClickListener {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(barcode.url)))
-            }
-        } else {
-            actionButton.isGone = true
-        }
+        actionButton.isGone = true
     }
 
     private fun ImageView.setBarcodeImage(barcode: Barcode) {

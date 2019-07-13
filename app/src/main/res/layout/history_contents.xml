@@ -21,7 +21,6 @@
             android:visibleIf="@{uiModel.isEmpty()}"
             app:constraint_referenced_ids="emptyIcon,emptyDescription" />
 
-
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/emptyIcon"
             android:layout_width="0dp"
