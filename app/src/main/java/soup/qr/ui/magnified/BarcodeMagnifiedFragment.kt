@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
 import soup.qr.core.encoder.BarcodeImage
@@ -15,6 +16,7 @@ import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
 import soup.qr.ui.result.BarcodeResultFragmentArgs
 import soup.qr.utils.observeState
+import soup.qr.utils.setOnDebounceClickListener
 
 class BarcodeMagnifiedFragment : BaseFragment() {
 
@@ -27,6 +29,9 @@ class BarcodeMagnifiedFragment : BaseFragment() {
     ): View? {
         val binding = MagnifiedFragmentBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.barcodeImage.setOnDebounceClickListener {
+            findNavController().navigateUp()
+        }
         viewModel.uiModel.observeState(viewLifecycleOwner) {
             binding.barcodeImage.setBarcodeImage(it)
         }
