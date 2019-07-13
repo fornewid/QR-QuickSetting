@@ -50,14 +50,28 @@ class FirebaseBarcodeDetector : BarcodeDetector {
     ) {
         coreDetector.detectInImage(FirebaseVisionImage.from(rawImage))
             .addOnSuccessListener {
-                val barcode = it.find { it.valueType == FirebaseVisionBarcode.TYPE_URL }
+                val barcode = it.mapNotNull { barcode ->
+                    when (barcode.valueType) {
+                        FirebaseVisionBarcode.TYPE_URL ->
+                            Barcode.Url(
+                                format = barcode.format,
+                                rawValue = barcode.rawValue.orEmpty(),
+                                url = barcode.rawValue.orEmpty()
+                            )
+                        FirebaseVisionBarcode.TYPE_TEXT ->
+                            Barcode.Text(
+                                format = barcode.format,
+                                rawValue = barcode.rawValue.orEmpty()
+                            )
+                        else ->
+                            Barcode.Unknown(
+                                format = barcode.format,
+                                rawValue = barcode.rawValue.orEmpty()
+                            )
+                    }
+                }.firstOrNull()
                 if (barcode != null) {
-                    val urlBarcode = Barcode.Url(
-                        format = barcode.format,
-                        rawValue = barcode.rawValue.orEmpty(),
-                        url = barcode.rawValue.orEmpty()
-                    )
-                    callback?.onDetected(urlBarcode)
+                    callback?.onDetected(barcode)
                 } else if (it.isNotEmpty()) {
                     callback?.onDetectFailed()
                 } else {
