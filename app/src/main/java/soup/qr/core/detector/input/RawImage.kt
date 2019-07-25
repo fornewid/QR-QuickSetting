@@ -1,9 +1,8 @@
 package soup.qr.core.detector.input
 
+import android.media.Image
+
 class RawImage(
-    val format: RawImageFormat,
-    val data: ByteArray,
-    val width: Int,
-    val height: Int,
+    val image: Image,
     val rotationDegrees: Int
 )
