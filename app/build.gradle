@@ -68,9 +68,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
-    def camerax_version = "1.0.0-alpha02"
-    implementation "androidx.camera:camera-core:$camerax_version"
-    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation 'com.otaliastudios:cameraview:2.0.0-rc2'
 
     implementation 'com.google.firebase:firebase-core:17.0.1'
     implementation 'com.google.firebase:firebase-ml-vision:22.0.0'

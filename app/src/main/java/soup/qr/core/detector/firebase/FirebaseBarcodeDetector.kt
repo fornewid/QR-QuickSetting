@@ -48,7 +48,8 @@ class FirebaseBarcodeDetector : BarcodeDetector {
         rawImage: RawImage,
         crossinline completeAction: () -> Unit
     ) {
-        coreDetector.detectInImage(FirebaseVisionImage.from(rawImage))
+        coreDetector
+            .detectInImage(FirebaseVisionImage.from(rawImage))
             .addOnSuccessListener {
                 val barcode = it.mapNotNull { barcode ->
                     when (barcode.valueType) {

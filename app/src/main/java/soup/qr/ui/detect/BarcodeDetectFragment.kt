@@ -3,24 +3,23 @@ package soup.qr.ui.detect
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Matrix
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.util.DisplayMetrics
-import android.util.Rational
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.camera.core.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.doOnNextLayout
 import androidx.navigation.fragment.findNavController
+import com.otaliastudios.cameraview.internal.utils.WorkerHandler
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
+import soup.qr.core.detector.input.RawImage
+import soup.qr.core.detector.input.RawImageFormat
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
 import soup.qr.utils.observeEvent
+import timber.log.Timber
 
 class BarcodeDetectFragment : BaseFragment() {
 
@@ -29,6 +28,24 @@ class BarcodeDetectFragment : BaseFragment() {
     private lateinit var binding: FragmentDetectBinding
 
     private var hintAnimation: BarcodeDetectHintAnimation? = null
+
+    private val detector: BarcodeDetector = FirebaseBarcodeDetector().apply {
+        setCallback(object : BarcodeDetector.Callback {
+
+            override fun onIdle() {
+                hintAnimation?.onIdle()
+            }
+
+            override fun onDetected(barcode: Barcode) {
+                hintAnimation?.onSuccess()
+                viewModel.onDetected(barcode)
+            }
+
+            override fun onDetectFailed() {
+                hintAnimation?.onError()
+            }
+        })
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,19 +66,13 @@ class BarcodeDetectFragment : BaseFragment() {
     private fun FragmentDetectBinding.initViewState() {
         hintAnimation = BarcodeDetectHintAnimation(this)
 
-        val preview = cameraPreview
         if (allPermissionsGranted(root.context)) {
-            preview.post {
-                startCameraWith()
-            }
+            startCamera()
         } else {
             requestPermissions(
                 REQUIRED_PERMISSIONS,
                 REQUEST_CODE_PERMISSIONS
             )
-        }
-        preview.doOnNextLayout {
-            preview.updateTransform()
         }
     }
 
@@ -73,75 +84,31 @@ class BarcodeDetectFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         hintAnimation?.stop()
+        binding.cameraView.close()
     }
 
-    private fun FragmentDetectBinding.startCameraWith() {
-        val textureView: TextureView = cameraPreview
-        val metrics = DisplayMetrics().also { textureView.display.getRealMetrics(it) }
-        val screenAspectRatio = Rational(metrics.widthPixels, metrics.heightPixels)
-
-        val previewConfig = PreviewConfig.Builder()
-            .apply {
-                setTargetAspectRatio(screenAspectRatio)
-                setTargetRotation(textureView.display.rotation)
-            }
-            .build()
-        val preview = Preview(previewConfig)
-        preview.onPreviewOutputUpdateListener = Preview.OnPreviewOutputUpdateListener {
-            val parent = textureView.parent as ViewGroup
-            parent.removeView(textureView)
-            parent.addView(textureView, 0)
-
-            textureView.surfaceTexture = it.surfaceTexture
-            textureView.updateTransform()
+    override fun onDestroyView() {
+        binding.cameraView.clearFrameProcessors()
+        WorkerHandler.execute {
+            binding.cameraView.destroy()
         }
-
-        val detector = FirebaseBarcodeDetector().apply {
-            setCallback(object : BarcodeDetector.Callback {
-
-                override fun onIdle() {
-                    hintAnimation?.onIdle()
-                }
-
-                override fun onDetected(barcode: Barcode) {
-                    hintAnimation?.onSuccess()
-                    viewModel.onDetected(barcode)
-                }
-
-                override fun onDetectFailed() {
-                    hintAnimation?.onError()
-                }
-            })
-        }
-        val analyzerConfig = ImageAnalysisConfig.Builder()
-            .apply {
-                val analyzerThread = HandlerThread("BarcodeCodeAnalysis").apply { start() }
-                setCallbackHandler(Handler(analyzerThread.looper))
-                setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-                setTargetRotation(textureView.display.rotation)
-            }
-            .build()
-        val analyzerUseCase = ImageAnalysis(analyzerConfig)
-            .apply {
-                analyzer = BarcodeImageAnalyzer(detector)
-            }
-
-        CameraX.bindToLifecycle(viewLifecycleOwner, preview, analyzerUseCase)
+        super.onDestroyView()
     }
 
-    private fun TextureView.updateTransform() {
-        val matrix = Matrix()
-        val centerX = width / 2f
-        val centerY = height / 2f
-        val rotationDegrees = when (display.rotation) {
-            Surface.ROTATION_0 -> 0
-            Surface.ROTATION_90 -> 90
-            Surface.ROTATION_180 -> 180
-            Surface.ROTATION_270 -> 270
-            else -> return
+    private fun FragmentDetectBinding.startCamera() {
+        cameraView.open()
+        cameraView.addFrameProcessor { frame ->
+            Timber.d("SOUP")
+            if (detector.isInDetecting().not()) {
+                detector.detect(RawImage(
+                    frame.data,
+                    frame.size.width,
+                    frame.size.height,
+                    RawImageFormat.FORMAT_NV21,
+                    frame.rotation
+                ))
+            }
         }
-        matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
-        setTransform(matrix)
     }
 
     override fun onRequestPermissionsResult(
@@ -152,12 +119,9 @@ class BarcodeDetectFragment : BaseFragment() {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             val context: Context = binding.root.context
             if (allPermissionsGranted(context)) {
-                binding.root.post {
-                    binding.startCameraWith()
-                }
+                binding.startCamera()
             } else {
-                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
             }
         }
