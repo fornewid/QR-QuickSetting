@@ -19,7 +19,6 @@ import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
 import soup.qr.utils.observeEvent
-import timber.log.Timber
 
 class BarcodeDetectFragment : BaseFragment() {
 
@@ -98,7 +97,6 @@ class BarcodeDetectFragment : BaseFragment() {
     private fun FragmentDetectBinding.startCamera() {
         cameraView.open()
         cameraView.addFrameProcessor { frame ->
-            Timber.d("SOUP")
             if (detector.isInDetecting().not()) {
                 detector.detect(RawImage(
                     frame.data,
