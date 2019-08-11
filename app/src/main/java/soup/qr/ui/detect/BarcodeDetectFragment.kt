@@ -10,11 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
-import com.otaliastudios.cameraview.internal.utils.WorkerHandler
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.core.detector.input.RawImage
-import soup.qr.core.detector.input.RawImageFormat
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
 import soup.qr.ui.BaseFragment
@@ -83,28 +81,14 @@ class BarcodeDetectFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         hintAnimation?.stop()
-        binding.cameraView.close()
-    }
-
-    override fun onDestroyView() {
-        binding.cameraView.clearFrameProcessors()
-        WorkerHandler.execute {
-            binding.cameraView.destroy()
-        }
-        super.onDestroyView()
     }
 
     private fun FragmentDetectBinding.startCamera() {
-        cameraView.open()
-        cameraView.addFrameProcessor { frame ->
-            if (detector.isInDetecting().not()) {
-                detector.detect(RawImage(
-                    frame.data,
-                    frame.size.width,
-                    frame.size.height,
-                    RawImageFormat.FORMAT_NV21,
-                    frame.rotation
-                ))
+        cameraView.bindToLifecycle(viewLifecycleOwner)
+        cameraView.setAnalyzer { image, rotationDegrees ->
+            val frameImage = image.image
+            if (frameImage != null && detector.isInDetecting().not()) {
+                detector.detect(RawImage(frameImage, rotationDegrees))
             }
         }
     }

@@ -8,15 +8,13 @@
         android:layout_height="match_parent"
         tools:context=".ui.detect.BarcodeDetectFragment">
 
-        <com.otaliastudios.cameraview.CameraView
+        <androidx.camera.view.CameraView
             android:id="@+id/cameraView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:cameraAudio="off"
-            app:cameraFacing="back"
-            app:cameraGesturePinch="zoom"
-            app:cameraGestureTap="autoFocus"
-            app:cameraUseDeviceOrientation="false"
+            app:captureMode="image"
+            app:lensFacing="back"
+            app:pinchToZoomEnabled="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

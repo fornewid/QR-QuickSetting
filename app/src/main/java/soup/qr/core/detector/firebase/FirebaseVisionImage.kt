@@ -3,27 +3,11 @@ package soup.qr.core.detector.firebase
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import soup.qr.core.detector.input.RawImage
-import soup.qr.core.detector.input.RawImageFormat
 
 object FirebaseVisionImage {
 
     fun from(rawImage: RawImage): FirebaseVisionImage = rawImage.run {
-        FirebaseVisionImage.fromByteArray(
-            data,
-            FirebaseVisionImageMetadata.Builder()
-                .setWidth(width)
-                .setHeight(height)
-                .setFormat(format())
-                .setRotation(rotation())
-                .build()
-        )
-    }
-
-    private fun RawImage.format(): Int {
-        return when (format) {
-            RawImageFormat.FORMAT_NV21 -> FirebaseVisionImageMetadata.IMAGE_FORMAT_NV21
-            RawImageFormat.FORMAT_YV12 -> FirebaseVisionImageMetadata.IMAGE_FORMAT_YV12
-        }
+        FirebaseVisionImage.fromMediaImage(image, rotation())
     }
 
     private fun RawImage.rotation(): Int {
