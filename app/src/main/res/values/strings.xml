@@ -3,6 +3,7 @@
     <string name="tile_name">Barcode</string>
     <string name="history_title">Barcode History</string>
     <string name="history_description">Hi, it\'s empty!</string>
+    <string name="history_delete_title">Delete barcode history</string>
     <string name="history_delete_message">Deleted barcode history can\'t be recovered. Are you sure you want to continue?</string>
     <string name="history_delete_button_positive">Delete</string>
     <string name="history_delete_button_negative">Cancel</string>

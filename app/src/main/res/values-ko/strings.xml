@@ -3,6 +3,7 @@
     <string name="tile_name">바코드</string>
     <string name="history_title">바코드 기록</string>
     <string name="history_description">안녕, 비어있어요!</string>
+    <string name="history_delete_title">바코드 기록 삭제</string>
     <string name="history_delete_message">바코드 기록은 삭제하면 다시 볼 수 없습니다. 삭제할까요?</string>
     <string name="history_delete_button_positive">삭제</string>
     <string name="history_delete_button_negative">취소</string>

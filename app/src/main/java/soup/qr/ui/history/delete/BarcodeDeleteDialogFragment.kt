@@ -13,6 +13,7 @@ class BarcodeDeleteDialogFragment : BaseDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_MaterialComponents_Dialog_Alert)
+            .setTitle(R.string.history_delete_title)
             .setMessage(R.string.history_delete_message)
             .setPositiveButton(R.string.history_delete_button_positive) { _, _ ->
                 viewModel.onBarcodeHistoryDelete()
