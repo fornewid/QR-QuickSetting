@@ -9,4 +9,6 @@ interface BarcodeLocalDataSource {
     fun getHistories(): Observable<List<BarcodeHistory>>
 
     fun addHistory(history: BarcodeHistory): Completable
+
+    fun deleteHistory(history: BarcodeHistory): Completable
 }

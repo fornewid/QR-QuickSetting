@@ -12,7 +12,7 @@ import soup.qr.utils.observeState
 
 class BarcodeHistoryFragment : BaseFragment() {
 
-    private val viewModel: BarcodeHistoryViewModel by viewModel()
+    private val viewModel: BarcodeHistoryViewModel by activityViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,9 +40,9 @@ class BarcodeHistoryFragment : BaseFragment() {
                 BarcodeHistoryFragmentDirections.actionToResult(it)
             )
         }
-        viewModel.showMagnifiedEvent.observeEvent(viewLifecycleOwner) {
+        viewModel.showDeleteDialogEvent.observeEvent(viewLifecycleOwner) {
             findNavController().navigate(
-                BarcodeHistoryFragmentDirections.actionToMagnified(it)
+                BarcodeHistoryFragmentDirections.actionToHistoryDelete()
             )
         }
         return binding.root

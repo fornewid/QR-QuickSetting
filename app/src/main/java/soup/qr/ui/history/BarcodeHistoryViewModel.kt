@@ -10,10 +10,11 @@ import soup.qr.model.BarcodeHistory
 import soup.qr.ui.BaseViewModel
 import soup.qr.ui.EventLiveData
 import soup.qr.ui.MutableEventLiveData
+import timber.log.Timber
 import javax.inject.Inject
 
 class BarcodeHistoryViewModel @Inject constructor(
-    repository: BarcodeRepository
+    private val repository: BarcodeRepository
 ) : BaseViewModel() {
 
     private val _uiModel = MutableLiveData<BarcodeHistoryUiModel>()
@@ -28,11 +29,14 @@ class BarcodeHistoryViewModel @Inject constructor(
     val showResultEvent: EventLiveData<Barcode>
         get() = _showResultEvent
 
-    private val _showMagnifiedEvent = MutableEventLiveData<Barcode>()
-    val showMagnifiedEvent: EventLiveData<Barcode>
-        get() = _showMagnifiedEvent
+    private var selectedHistory: BarcodeHistory? = null
+
+    private val _showDeleteDialogEvent = MutableEventLiveData<Unit>()
+    val showDeleteDialogEvent: EventLiveData<Unit>
+        get() = _showDeleteDialogEvent
 
     init {
+        Timber.d("init: 0x${hashCode().toString(16)}")
         repository.getHistories()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -51,7 +55,22 @@ class BarcodeHistoryViewModel @Inject constructor(
     }
 
     fun onBarcodeHistoryLongClick(history: BarcodeHistory) {
-        _showMagnifiedEvent.event = history.toBarcode()
+        selectedHistory = history
+        _showDeleteDialogEvent.event = Unit
+    }
+
+    fun onBarcodeHistoryDelete() {
+        selectedHistory?.let {
+            repository.deleteHistory(it)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+                .disposeOnCleared()
+        }
+    }
+
+    fun onBarcodeHistoryCancel() {
+        selectedHistory = null
     }
 
     private fun BarcodeHistory.toBarcode(): Barcode {

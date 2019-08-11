@@ -9,6 +9,7 @@ import soup.qr.di.scope.FragmentScope
 import soup.qr.di.scope.ViewModelKey
 import soup.qr.ui.history.BarcodeHistoryFragment
 import soup.qr.ui.history.BarcodeHistoryViewModel
+import soup.qr.ui.history.delete.BarcodeDeleteDialogFragment
 
 @Module
 abstract class HistoryUiModule {
@@ -21,4 +22,8 @@ abstract class HistoryUiModule {
     @IntoMap
     @ViewModelKey(BarcodeHistoryViewModel::class)
     abstract fun bindBarcodeHistoryViewModel(viewModel: BarcodeHistoryViewModel): ViewModel
+
+    @FragmentScope
+    @ContributesAndroidInjector
+    abstract fun bindBarcodeDeleteDialogFragment(): BarcodeDeleteDialogFragment
 }

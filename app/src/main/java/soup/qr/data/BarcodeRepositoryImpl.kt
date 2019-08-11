@@ -16,4 +16,8 @@ class BarcodeRepositoryImpl(
     override fun addHistory(history: BarcodeHistory): Completable {
         return local.addHistory(history)
     }
+
+    override fun deleteHistory(history: BarcodeHistory): Completable {
+        return local.deleteHistory(history)
+    }
 }

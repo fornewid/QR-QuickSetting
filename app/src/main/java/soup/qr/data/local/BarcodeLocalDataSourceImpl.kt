@@ -16,4 +16,8 @@ class BarcodeLocalDataSourceImpl(
     override fun addHistory(history: BarcodeHistory): Completable {
         return dao.insert(history.toEntity())
     }
+
+    override fun deleteHistory(history: BarcodeHistory): Completable {
+        return dao.delete(history.toEntity())
+    }
 }

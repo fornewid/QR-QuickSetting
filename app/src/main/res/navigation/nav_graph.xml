@@ -25,7 +25,15 @@
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_up" />
+
+        <action
+            android:id="@+id/action_to_history_delete"
+            app:destination="@id/history_delete" />
     </fragment>
+
+    <dialog
+        android:id="@+id/history_delete"
+        android:name="soup.qr.ui.history.delete.BarcodeDeleteDialogFragment" />
 
     <fragment
         android:id="@+id/detect"
@@ -53,6 +61,14 @@
         <argument
             android:name="barcode"
             app:argType="soup.qr.model.Barcode" />
+
+        <action
+            android:id="@+id/action_to_magnified"
+            app:destination="@id/magnified"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
 
     <fragment
@@ -64,13 +80,5 @@
             android:name="barcode"
             app:argType="soup.qr.model.Barcode" />
     </fragment>
-
-    <action
-        android:id="@+id/action_to_magnified"
-        app:destination="@id/magnified"
-        app:enterAnim="@anim/fade_in"
-        app:exitAnim="@anim/fade_out"
-        app:popEnterAnim="@anim/fade_in"
-        app:popExitAnim="@anim/fade_out" />
 
 </navigation>
