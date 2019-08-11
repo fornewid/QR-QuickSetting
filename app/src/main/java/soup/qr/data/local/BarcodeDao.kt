@@ -12,7 +12,7 @@ import soup.qr.data.local.entity.BarcodeHistoryEntity
 @Dao
 interface BarcodeDao {
 
-    @Query("SELECT * FROM barcode_history ORDER BY datetime(last_detected_at)")
+    @Query("SELECT * FROM barcode_history ORDER BY datetime(last_detected_at) DESC")
     fun getBarcode(): Observable<List<BarcodeHistoryEntity>>
 
     @Insert(onConflict = REPLACE)
