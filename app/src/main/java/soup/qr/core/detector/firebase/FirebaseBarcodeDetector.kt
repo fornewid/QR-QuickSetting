@@ -1,9 +1,11 @@
 package soup.qr.core.detector.firebase
 
+import android.graphics.Bitmap
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.input.RawImage
 import soup.qr.model.Barcode
@@ -27,31 +29,62 @@ class FirebaseBarcodeDetector : BarcodeDetector {
         coreDetector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
     }
 
-    override fun isInDetecting(): Boolean {
-        return isInDetecting.get() || hasAftertasteYet()
-    }
-
-    override fun detect(image: RawImage) {
-        if (isInDetecting.compareAndSet(false, true)) {
-            doOnDetectComplete(image) {
-                recordDetectTime()
-                isInDetecting.set(false)
-            }
-        }
-    }
-
     override fun setCallback(callback: BarcodeDetector.Callback?) {
         this.callback = callback
     }
 
-    private inline fun doOnDetectComplete(
-        rawImage: RawImage,
-        crossinline completeAction: () -> Unit
+    override fun isInDetecting(): Boolean {
+        return isInDetecting.get() || hasAftertasteYet()
+    }
+
+    override fun detect(image: RawImage)  {
+        if (isInDetecting.compareAndSet(false, true)) {
+            fun complete() {
+                recordDetectTime()
+                isInDetecting.set(false)
+            }
+            val bitmap = image.toBitmap()
+            detectIn(bitmap,
+                onSuccess = {
+                    val barcode = it.firstOrNull()
+                    if (barcode != null) {
+                        callback?.onDetected(barcode)
+                        complete()
+                    } else {
+                        detectIn(bitmap.inverted(),
+                            onSuccess = {
+                                val barcode = it.firstOrNull()
+                                if (barcode != null) {
+                                    callback?.onDetected(barcode)
+                                } else {
+                                    callback?.onDetectFailed()
+                                }
+                                complete()
+                            },
+                            onError = {
+                                callback?.onDetectFailed()
+                                complete()
+                            }
+                        )
+                    }
+                },
+                onError = {
+                    callback?.onDetectFailed()
+                    complete()
+                }
+            )
+        }
+    }
+
+    private inline fun detectIn(
+        bitmap: Bitmap,
+        crossinline onSuccess: (List<Barcode>) -> Unit,
+        crossinline onError: (Throwable) -> Unit
     ) {
         coreDetector
-            .detectInImage(FirebaseVisionImage.from(rawImage))
+            .detectInImage(FirebaseVisionImage.fromBitmap(bitmap))
             .addOnSuccessListener {
-                val barcode = it.mapNotNull { barcode ->
+                it.mapNotNull { barcode ->
                     when (barcode.valueType) {
                         FirebaseVisionBarcode.TYPE_URL ->
                             Barcode.Url(
@@ -70,20 +103,10 @@ class FirebaseBarcodeDetector : BarcodeDetector {
                                 rawValue = barcode.rawValue.orEmpty()
                             )
                     }
-                }.firstOrNull()
-                if (barcode != null) {
-                    callback?.onDetected(barcode)
-                } else if (it.isNotEmpty()) {
-                    callback?.onDetectFailed()
-                } else {
-                    callback?.onIdle()
-                }
+                }.run(onSuccess)
             }
             .addOnFailureListener {
-                callback?.onDetectFailed()
-            }
-            .addOnCompleteListener {
-                completeAction()
+                onError(it)
             }
     }
 

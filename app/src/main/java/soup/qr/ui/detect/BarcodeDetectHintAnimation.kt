@@ -74,10 +74,6 @@ class BarcodeDetectHintAnimation(private val binding: FragmentDetectBinding) {
         hintAnimator.pause()
     }
 
-    fun onIdle() {
-        setColor(Color.WHITE)
-    }
-
     fun onSuccess() {
         setColor(Color.WHITE)
     }

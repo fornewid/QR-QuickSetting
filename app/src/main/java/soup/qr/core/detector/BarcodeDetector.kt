@@ -8,8 +8,6 @@ interface BarcodeDetector : Detector {
 
     interface Callback {
 
-        fun onIdle()
-
         fun onDetected(barcode: Barcode)
 
         fun onDetectFailed()

@@ -29,10 +29,6 @@ class BarcodeDetectFragment : BaseFragment() {
     private val detector: BarcodeDetector = FirebaseBarcodeDetector().apply {
         setCallback(object : BarcodeDetector.Callback {
 
-            override fun onIdle() {
-                hintAnimation?.onIdle()
-            }
-
             override fun onDetected(barcode: Barcode) {
                 hintAnimation?.onSuccess()
                 viewModel.onDetected(barcode)
