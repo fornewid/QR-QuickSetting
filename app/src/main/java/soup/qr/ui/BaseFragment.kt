@@ -1,12 +1,10 @@
 package soup.qr.ui
 
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerFragment
-import soup.qr.utils.activityViewModelProvider
-import soup.qr.utils.lazyFast
-import soup.qr.utils.parentViewModelProvider
-import soup.qr.utils.viewModelProvider
 import javax.inject.Inject
 
 abstract class BaseFragment : DaggerFragment() {
@@ -15,11 +13,11 @@ abstract class BaseFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     protected inline fun <reified VM : ViewModel> activityViewModel(): Lazy<VM> =
-        lazyFast { activityViewModelProvider<VM>(viewModelFactory) }
+        activityViewModels { viewModelFactory }
 
     protected inline fun <reified VM : ViewModel> viewModel(): Lazy<VM> =
-        lazyFast { viewModelProvider<VM>(viewModelFactory) }
+        viewModels { viewModelFactory }
 
     protected inline fun <reified VM : ViewModel> parentViewModel(): Lazy<VM> =
-        lazyFast { parentViewModelProvider<VM>(viewModelFactory) }
+        viewModels({ requireParentFragment() }, { viewModelFactory })
 }

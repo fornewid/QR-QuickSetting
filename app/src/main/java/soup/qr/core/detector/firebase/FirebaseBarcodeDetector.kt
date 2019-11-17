@@ -3,8 +3,6 @@ package soup.qr.core.detector.firebase
 import android.graphics.Bitmap
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
-import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.input.RawImage
@@ -13,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class FirebaseBarcodeDetector : BarcodeDetector {
 
-    private val coreDetector: FirebaseVisionBarcodeDetector
+    private val coreDetector = FirebaseVision.getInstance().visionBarcodeDetector
 
     private val isInDetecting = AtomicBoolean(false)
 
@@ -21,13 +19,6 @@ class FirebaseBarcodeDetector : BarcodeDetector {
 
     // workaround
     private var lastDetectTime: Long = 0
-
-    init {
-        val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-            .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_ALL_FORMATS)
-            .build()
-        coreDetector = FirebaseVision.getInstance().getVisionBarcodeDetector(options)
-    }
 
     override fun setCallback(callback: BarcodeDetector.Callback?) {
         this.callback = callback
