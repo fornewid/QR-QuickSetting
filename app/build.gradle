@@ -58,6 +58,7 @@ dependencies {
     implementation project(':camera-view')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation "androidx.camera:camera-camera2:1.0.0-alpha10"
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.fragment:fragment-ktx:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
