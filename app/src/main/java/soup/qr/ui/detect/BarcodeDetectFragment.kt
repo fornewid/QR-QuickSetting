@@ -81,10 +81,13 @@ class BarcodeDetectFragment : BaseFragment() {
 
     private fun FragmentDetectBinding.startCamera() {
         cameraView.bindToLifecycle(viewLifecycleOwner)
-        cameraView.setAnalyzer { image, rotationDegrees ->
-            val frameImage = image.image
-            if (frameImage != null && detector.isInDetecting().not()) {
-                detector.detect(RawImage(frameImage, rotationDegrees))
+        cameraView.setAnalyzer { proxy ->
+            proxy.use {
+                it.image?.use {
+                    if (detector.isInDetecting().not()) {
+                        detector.detect(RawImage(it, proxy.imageInfo.rotationDegrees))
+                    }
+                }
             }
         }
     }
