@@ -59,25 +59,25 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation "androidx.camera:camera-camera2:1.0.0-alpha10"
-    implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.fragment:fragment-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.fragment:fragment-ktx:1.2.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation "com.google.android.material:material:1.2.0-alpha01"
+    implementation "com.google.android.material:material:1.2.0-alpha04"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-    def lifecycle_version = "2.1.0"
+    def lifecycle_version = "2.2.0"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.google.firebase:firebase-ml-vision:24.0.1'
     implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.0.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 
-    def dagger_version = "2.25.2"
+    def dagger_version = "2.26"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "com.google.dagger:dagger-android:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
@@ -85,16 +85,15 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
     implementation "io.reactivex.rxjava2:rxjava:2.2.13"
-    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
     implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
-    def room_version = "2.2.1"
+    def room_version = "2.2.4"
     implementation "androidx.room:room-runtime:$room_version"
     implementation  "androidx.room:room-rxjava2:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
-    implementation 'com.airbnb.android:lottie:3.0.7'
+    implementation 'com.airbnb.android:lottie:3.3.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
