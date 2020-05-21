@@ -4,15 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import soup.qr.databinding.HistoryFragmentBinding
-import soup.qr.ui.BaseFragment
 import soup.qr.utils.observeEvent
 import soup.qr.utils.observeState
 
-class BarcodeHistoryFragment : BaseFragment() {
+class BarcodeHistoryFragment : Fragment() {
 
-    private val viewModel: BarcodeHistoryViewModel by activityViewModel()
+    private val viewModel: BarcodeHistoryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

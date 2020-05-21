@@ -6,16 +6,16 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import soup.qr.Dependency
 import soup.qr.data.BarcodeRepository
 import soup.qr.model.Barcode
 import soup.qr.model.BarcodeHistory
 import soup.qr.ui.EventLiveData
 import soup.qr.ui.MutableEventLiveData
 import timber.log.Timber
-import javax.inject.Inject
 
-class BarcodeHistoryViewModel @Inject constructor(
-    private val repository: BarcodeRepository
+class BarcodeHistoryViewModel(
+    private val repository: BarcodeRepository = Dependency.repository
 ) : ViewModel() {
 
     val uiModel = repository.getHistories()

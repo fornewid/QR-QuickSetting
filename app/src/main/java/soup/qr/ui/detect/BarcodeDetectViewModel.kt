@@ -5,15 +5,15 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.threeten.bp.OffsetDateTime
+import soup.qr.Dependency
 import soup.qr.data.BarcodeRepository
 import soup.qr.model.Barcode
 import soup.qr.model.BarcodeHistory
 import soup.qr.ui.EventLiveData
 import soup.qr.ui.MutableEventLiveData
-import javax.inject.Inject
 
-class BarcodeDetectViewModel @Inject constructor(
-    private val repository: BarcodeRepository
+class BarcodeDetectViewModel(
+    private val repository: BarcodeRepository = Dependency.repository
 ) : ViewModel() {
 
     private val _showResultEvent = MutableEventLiveData<Barcode>()

@@ -1,9 +1,9 @@
 package soup.qr
 
 import android.os.Bundle
-import soup.qr.ui.BaseActivity
+import androidx.appcompat.app.AppCompatActivity
 
-class BarcodeActivity : BaseActivity() {
+class BarcodeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

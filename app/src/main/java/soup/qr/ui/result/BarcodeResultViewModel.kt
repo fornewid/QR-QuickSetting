@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import soup.qr.model.Barcode
-import javax.inject.Inject
 
-class BarcodeResultViewModel @Inject constructor() : ViewModel() {
+class BarcodeResultViewModel : ViewModel() {
 
     private val _uiModel = MutableLiveData<Barcode>()
     val uiModel: LiveData<Barcode>

@@ -9,18 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.core.detector.input.RawImage
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
-import soup.qr.ui.BaseFragment
 import soup.qr.utils.observeEvent
 
-class BarcodeDetectFragment : BaseFragment() {
+class BarcodeDetectFragment : Fragment() {
 
-    private val viewModel: BarcodeDetectViewModel by viewModel()
+    private val viewModel: BarcodeDetectViewModel by viewModels()
 
     private lateinit var binding: FragmentDetectBinding
 
