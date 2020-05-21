@@ -1,81 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardElevation="4dp"
+    app:rippleColor="?colorOnSurface">
 
-    <data>
-
-        <variable
-            name="item"
-            type="soup.qr.model.BarcodeHistory" />
-    </data>
-
-    <com.google.android.material.card.MaterialCardView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        app:cardBackgroundColor="?attr/colorSurface"
-        app:cardElevation="4dp"
-        app:rippleColor="?colorOnSurface">
+        android:minHeight="96dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/barcode_image"
+            android:layout_width="96dp"
+            android:layout_height="0dp"
+            android:background="#FF0000"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/barcode_type_label"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:minHeight="96dp">
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@id/barcode_detected_date"
+            app:layout_constraintStart_toEndOf="@id/barcode_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Barcode" />
 
-            <ImageView
-                android:id="@+id/barcodeImage"
-                android:layout_width="96dp"
-                android:layout_height="0dp"
-                android:background="#FF0000"
-                android:scaleType="centerCrop"
-                app:barcodeImage="@{item}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="ContentDescription"
-                tools:src="@tools:sample/avatars" />
+        <TextView
+            android:id="@+id/barcode_detected_date"
+            style="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBaseline_toBaselineOf="@id/barcode_type_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barcode_type_label"
+            tools:text="19.06.29." />
 
-            <TextView
-                android:id="@+id/barcodeTypeLabel"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:barcodeFormatText="@{item}"
-                app:layout_constraintEnd_toStartOf="@id/barcodeDetectedDate"
-                app:layout_constraintStart_toEndOf="@id/barcodeImage"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Barcode" />
+        <TextView
+            android:id="@+id/barcode_display_text"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/barcode_image"
+            app:layout_constraintTop_toBottomOf="@id/barcode_type_label"
+            tools:text="Barcode\nBarcode\nBarcode" />
 
-            <TextView
-                android:id="@+id/barcodeDetectedDate"
-                style="@style/TextAppearance.MaterialComponents.Subtitle2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBaseline_toBaselineOf="@id/barcodeTypeLabel"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/barcodeTypeLabel"
-                tools:text="19.06.29." />
-
-            <TextView
-                android:id="@+id/barcodeDisplayText"
-                style="@style/TextAppearance.MaterialComponents.Body1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="@{item.rawValue}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/barcodeImage"
-                app:layout_constraintTop_toBottomOf="@id/barcodeTypeLabel"
-                tools:text="Barcode\nBarcode\nBarcode" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-</layout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

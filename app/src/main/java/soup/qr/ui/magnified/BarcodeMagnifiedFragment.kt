@@ -2,9 +2,7 @@ package soup.qr.ui.magnified
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -19,40 +17,31 @@ import soup.qr.model.Barcode
 import soup.qr.ui.result.BarcodeResultFragmentArgs
 import soup.qr.utils.setOnDebounceClickListener
 
-class BarcodeMagnifiedFragment : Fragment() {
+class BarcodeMagnifiedFragment : Fragment(R.layout.magnified_fragment) {
 
+    private val args: BarcodeResultFragmentArgs by navArgs()
     private val viewModel: BarcodeMagnifiedViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val binding = MagnifiedFragmentBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.barcodeImage.setOnDebounceClickListener {
-            findNavController().navigateUp()
-        }
-        viewModel.uiModel.observe(viewLifecycleOwner, Observer {
-            binding.barcodeImage.setBarcodeImage(it)
-        })
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val args: BarcodeResultFragmentArgs by navArgs()
+        with(MagnifiedFragmentBinding.bind(view)) {
+            barcodeImage.setOnDebounceClickListener {
+                findNavController().navigateUp()
+            }
+            viewModel.uiModel.observe(viewLifecycleOwner, Observer {
+                barcodeImage.setBarcodeImage(it)
+            })
+        }
         viewModel.onCreated(args.barcode)
     }
 
     private fun ImageView.setBarcodeImage(barcode: Barcode) {
+        fun createBarcodeImage(barcode: Barcode): Bitmap? {
+            val size = resources.getDimensionPixelSize(R.dimen.qr_code_size)
+            return BarcodeFormatMapper.zxingFormatOf(barcode.format)
+                ?.let(::BarcodeImage)
+                ?.create(barcode.rawValue, size)
+        }
         setImageBitmap(createBarcodeImage(barcode))
-    }
-
-    private fun View.createBarcodeImage(barcode: Barcode): Bitmap? {
-        val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        return BarcodeFormatMapper.zxingFormatOf(barcode.format)
-            ?.let(::BarcodeImage)
-            ?.create(barcode.rawValue, size)
     }
 }

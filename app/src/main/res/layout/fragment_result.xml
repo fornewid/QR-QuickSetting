@@ -1,130 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/result_scene"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.result.BarcodeResultFragment">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/resultScene"
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Widget.MaterialComponents.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            app:title="@string/title_result"
+            app:titleTextColor="@color/colorGrey" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.result.BarcodeResultFragment">
+        android:background="@color/colorNavy"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/barcode_image"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/qr_code_size"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@id/display_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                style="@style/Widget.MaterialComponents.Toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?actionBarSize"
-                app:title="@string/title_result"
-                app:titleTextColor="@color/colorGrey" />
+        <TextView
+            android:id="@+id/display_text"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:autoLink="all"
+            android:gravity="center"
+            android:textColor="@color/colorGrey"
+            android:textIsSelectable="true"
+            app:layout_constraintBottom_toTopOf="@id/action_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/barcode_image"
+            tools:text="ABCDEFGHIJKLMNOP" />
 
-        </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/action_button"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorCoral"
+            android:paddingStart="16dp"
+            android:paddingEnd="12dp"
+            android:text="@string/action_web"
+            android:textColor="@color/colorGrey"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_action_web"
+            app:iconGravity="end"
+            app:iconPadding="8dp"
+            app:iconTint="@color/colorGrey"
+            app:layout_constraintBottom_toBottomOf="@id/logo_top_guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/display_text" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorNavy"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/logo_top_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="120dp" />
 
-            <ImageView
-                android:id="@+id/barcodeImage"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/qr_code_size"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintBottom_toTopOf="@id/displayText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+        <ImageView
+            android:id="@+id/firebase"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="4dp"
+            android:src="@drawable/ic_logo_firebase"
+            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
+            app:layout_constraintEnd_toStartOf="@id/plus"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
 
-            <TextView
-                android:id="@+id/displayText"
-                style="@style/TextAppearance.MaterialComponents.Headline6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:autoLink="all"
-                android:gravity="center"
-                android:textColor="@color/colorGrey"
-                android:textIsSelectable="true"
-                app:layout_constraintBottom_toTopOf="@id/actionButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barcodeImage"
-                tools:text="ABCDEFGHIJKLMNOP" />
+        <ImageView
+            android:id="@+id/plus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_logo_add"
+            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
+            app:layout_constraintEnd_toStartOf="@id/ml_kit"
+            app:layout_constraintStart_toEndOf="@id/firebase"
+            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/actionButton"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorCoral"
-                android:paddingStart="16dp"
-                android:paddingEnd="12dp"
-                android:text="@string/action_web"
-                android:textColor="@color/colorGrey"
-                android:textStyle="bold"
-                app:icon="@drawable/ic_action_web"
-                app:iconGravity="end"
-                app:iconPadding="8dp"
-                app:iconTint="@color/colorGrey"
-                app:layout_constraintBottom_toBottomOf="@id/logoTopGuideline"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/displayText" />
+        <ImageView
+            android:id="@+id/ml_kit"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_logo_ml_kit"
+            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/plus"
+            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/logoTopGuideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_end="120dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/logo_bottom_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="20dp" />
 
-            <ImageView
-                android:id="@+id/firebase"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="4dp"
-                android:src="@drawable/ic_logo_firebase"
-                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
-                app:layout_constraintEnd_toStartOf="@id/plus"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/plus"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_margin="8dp"
-                android:src="@drawable/ic_logo_add"
-                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
-                app:layout_constraintEnd_toStartOf="@id/ml_kit"
-                app:layout_constraintStart_toEndOf="@id/firebase"
-                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
-
-            <ImageView
-                android:id="@+id/ml_kit"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_logo_ml_kit"
-                app:layout_constraintBottom_toBottomOf="@id/logoBottomGuideline"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/plus"
-                app:layout_constraintTop_toTopOf="@id/logoTopGuideline" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/logoBottomGuideline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_end="20dp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

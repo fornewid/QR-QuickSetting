@@ -1,41 +1,14 @@
 package soup.qr.utils
 
 import android.view.View
-import androidx.core.view.postOnAnimationDelayed
-import androidx.databinding.BindingAdapter
 
 private typealias OnClickListener = (View) -> Unit
 
-@BindingAdapter(value = ["onDebounceClick", "onDebounceClickDelay"], requireAll = false)
-fun setOnDebounceClickListener(view: View, listener: View.OnClickListener?, delay: Long = 0) {
-    if (listener == null) {
-        view.setOnClickListener(null)
-    } else {
-        view.setOnClickListener(OnDebounceClickListener {
-            if (delay > 0) {
-                view.postOnAnimationDelayed(delay) {
-                    it.run(listener::onClick)
-                }
-            } else {
-                it.run(listener::onClick)
-            }
-        })
-    }
-}
-
-fun View.setOnDebounceClickListener(delay: Long = 0, listener: OnClickListener?) {
+fun View.setOnDebounceClickListener(listener: OnClickListener?) {
     if (listener == null) {
         setOnClickListener(null)
     } else {
-        setOnClickListener(OnDebounceClickListener {
-            if (delay > 0) {
-                postOnAnimationDelayed(delay) {
-                    run(listener)
-                }
-            } else {
-                run(listener)
-            }
-        })
+        setOnClickListener(OnDebounceClickListener(listener))
     }
 }
 
@@ -45,9 +18,7 @@ class OnDebounceClickListener(private val listener: OnClickListener) : View.OnCl
         val now = System.currentTimeMillis()
         if (now - lastTime < INTERVAL) return
         lastTime = now
-        if (v != null) {
-            listener(v)
-        }
+        v?.run(listener)
     }
 
     companion object {

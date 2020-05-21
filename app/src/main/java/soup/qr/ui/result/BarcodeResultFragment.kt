@@ -2,9 +2,7 @@ package soup.qr.ui.result
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
@@ -17,51 +15,36 @@ import soup.qr.core.encoder.BarcodeImage
 import soup.qr.databinding.FragmentResultBinding
 import soup.qr.mapper.BarcodeFormatMapper
 import soup.qr.model.Barcode
+import soup.qr.ui.result.BarcodeResultFragmentDirections.Companion.actionToMagnified
 import soup.qr.utils.setOnDebounceClickListener
 
-class BarcodeResultFragment : Fragment() {
+class BarcodeResultFragment : Fragment(R.layout.fragment_result) {
 
     private val args: BarcodeResultFragmentArgs by navArgs()
-
     private val viewModel: BarcodeResultViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val binding = FragmentResultBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.barcodeImage.setOnDebounceClickListener {
-            findNavController().navigate(
-                BarcodeResultFragmentDirections.actionToMagnified(args.barcode)
-            )
-        }
-        viewModel.uiModel.observe(viewLifecycleOwner, Observer {
-            binding.render(barcode = it)
-        })
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        with(FragmentResultBinding.bind(view)) {
+            barcodeImage.setOnDebounceClickListener {
+                findNavController().navigate(actionToMagnified(args.barcode))
+            }
+            viewModel.uiModel.observe(viewLifecycleOwner, Observer {
+                barcodeImage.setBarcodeImage(it)
+                displayText.text = it.rawValue
+                actionButton.isGone = true
+            })
+        }
         viewModel.onCreated(args.barcode)
     }
 
-    private fun FragmentResultBinding.render(barcode: Barcode) {
-        barcodeImage.setBarcodeImage(barcode)
-        displayText.text = barcode.rawValue
-        actionButton.isGone = true
-    }
-
     private fun ImageView.setBarcodeImage(barcode: Barcode) {
+        fun createBarcodeImage(barcode: Barcode): Bitmap? {
+            val size = resources.getDimensionPixelSize(R.dimen.qr_code_size)
+            return BarcodeFormatMapper.zxingFormatOf(barcode.format)
+                ?.let(::BarcodeImage)
+                ?.create(barcode.rawValue, size)
+        }
         setImageBitmap(createBarcodeImage(barcode))
-    }
-
-    private fun View.createBarcodeImage(barcode: Barcode): Bitmap? {
-        val size = context.resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        return BarcodeFormatMapper.zxingFormatOf(barcode.format)
-            ?.let(::BarcodeImage)
-            ?.create(barcode.rawValue, size)
     }
 }

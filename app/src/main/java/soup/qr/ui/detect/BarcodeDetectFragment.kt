@@ -4,14 +4,13 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import soup.qr.R
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.core.detector.input.RawImage
@@ -20,12 +19,11 @@ import soup.qr.model.Barcode
 import soup.qr.ui.EventObserver
 import soup.qr.ui.detect.BarcodeDetectFragmentDirections.Companion.actionToResult
 
-class BarcodeDetectFragment : Fragment() {
+class BarcodeDetectFragment : Fragment(R.layout.fragment_detect) {
 
     private val viewModel: BarcodeDetectViewModel by viewModels()
 
-    private lateinit var binding: FragmentDetectBinding
-
+    private var binding: FragmentDetectBinding? = null
     private var hintAnimation: BarcodeDetectHintAnimation? = null
 
     private val detector: BarcodeDetector = FirebaseBarcodeDetector().apply {
@@ -42,30 +40,22 @@ class BarcodeDetectFragment : Fragment() {
         })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentDetectBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.initViewState()
-        viewModel.showResultEvent.observe(viewLifecycleOwner, EventObserver {
-            findNavController().navigate(actionToResult(barcode = it))
-        })
-        return binding.root
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        with(FragmentDetectBinding.bind(view)) {
+            hintAnimation = BarcodeDetectHintAnimation(this)
 
-    private fun FragmentDetectBinding.initViewState() {
-        hintAnimation = BarcodeDetectHintAnimation(this)
+            viewModel.showResultEvent.observe(viewLifecycleOwner, EventObserver {
+                findNavController().navigate(actionToResult(barcode = it))
+            })
 
-        if (allPermissionsGranted(root.context)) {
-            startCamera()
-        } else {
-            requestPermissions(
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
-            )
+            binding = this
+
+            if (allPermissionsGranted(view.context)) {
+                startCamera()
+            } else {
+                requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            }
         }
     }
 
@@ -98,11 +88,12 @@ class BarcodeDetectFragment : Fragment() {
         grantResults: IntArray
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            val context: Context = binding.root.context
+            val context = context ?: return
             if (allPermissionsGranted(context)) {
-                binding.startCamera()
+                binding?.startCamera()
             } else {
-                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Permissions not granted by the user.", Toast.LENGTH_SHORT)
+                    .show()
                 findNavController().popBackStack()
             }
         }
