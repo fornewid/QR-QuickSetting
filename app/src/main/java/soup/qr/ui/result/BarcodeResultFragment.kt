@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import soup.qr.R
@@ -16,7 +17,6 @@ import soup.qr.core.encoder.BarcodeImage
 import soup.qr.databinding.FragmentResultBinding
 import soup.qr.mapper.BarcodeFormatMapper
 import soup.qr.model.Barcode
-import soup.qr.utils.observeState
 import soup.qr.utils.setOnDebounceClickListener
 
 class BarcodeResultFragment : Fragment() {
@@ -37,9 +37,9 @@ class BarcodeResultFragment : Fragment() {
                 BarcodeResultFragmentDirections.actionToMagnified(args.barcode)
             )
         }
-        viewModel.uiModel.observeState(viewLifecycleOwner) {
+        viewModel.uiModel.observe(viewLifecycleOwner, Observer {
             binding.render(barcode = it)
-        }
+        })
         return binding.root
     }
 

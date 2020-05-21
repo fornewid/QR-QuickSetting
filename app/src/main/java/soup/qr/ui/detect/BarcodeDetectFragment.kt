@@ -17,7 +17,8 @@ import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.core.detector.input.RawImage
 import soup.qr.databinding.FragmentDetectBinding
 import soup.qr.model.Barcode
-import soup.qr.utils.observeEvent
+import soup.qr.ui.EventObserver
+import soup.qr.ui.detect.BarcodeDetectFragmentDirections.Companion.actionToResult
 
 class BarcodeDetectFragment : Fragment() {
 
@@ -49,11 +50,9 @@ class BarcodeDetectFragment : Fragment() {
         binding = FragmentDetectBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.initViewState()
-        viewModel.showResultEvent.observeEvent(viewLifecycleOwner) {
-            findNavController().navigate(
-                BarcodeDetectFragmentDirections.actionToResult(barcode = it)
-            )
-        }
+        viewModel.showResultEvent.observe(viewLifecycleOwner, EventObserver {
+            findNavController().navigate(actionToResult(barcode = it))
+        })
         return binding.root
     }
 
