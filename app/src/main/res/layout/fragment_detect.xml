@@ -37,8 +37,7 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_qr_hint1"
         app:layout_constraintStart_toStartOf="@id/qr_hint"
-        app:layout_constraintTop_toTopOf="@id/qr_hint"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintTop_toTopOf="@id/qr_hint" />
 
     <ImageView
         android:id="@+id/qr_hint2"
@@ -46,8 +45,7 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_qr_hint2"
         app:layout_constraintEnd_toEndOf="@id/qr_hint"
-        app:layout_constraintTop_toTopOf="@id/qr_hint"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintTop_toTopOf="@id/qr_hint" />
 
     <ImageView
         android:id="@+id/qr_hint3"
@@ -55,8 +53,7 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_qr_hint3"
         app:layout_constraintBottom_toBottomOf="@id/qr_hint"
-        app:layout_constraintStart_toStartOf="@id/qr_hint"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintStart_toStartOf="@id/qr_hint" />
 
     <ImageView
         android:id="@+id/qr_hint4"
@@ -64,7 +61,6 @@
         android:layout_height="48dp"
         android:src="@drawable/ic_qr_hint4"
         app:layout_constraintBottom_toBottomOf="@id/qr_hint"
-        app:layout_constraintEnd_toEndOf="@id/qr_hint"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintEnd_toEndOf="@id/qr_hint" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

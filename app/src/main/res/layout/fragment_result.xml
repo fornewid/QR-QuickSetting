@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/result_scene"
@@ -7,25 +7,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.result.BarcodeResultFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.AppCompat.Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            app:title="@string/title_result"
-            app:titleTextColor="@color/colorGrey" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_height="?actionBarSize"
+        android:background="?colorSurface"
+        android:elevation="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/title_result"
+        app:titleTextColor="@color/colorGrey" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@color/colorNavy"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <ImageView
             android:id="@+id/barcode_image"
@@ -41,7 +43,7 @@
 
         <TextView
             android:id="@+id/display_text"
-            style="@style/TextAppearance.MaterialComponents.Headline6"
+            style="@style/TextAppearance.AppCompat.Subhead"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
@@ -55,21 +57,20 @@
             app:layout_constraintTop_toBottomOf="@+id/barcode_image"
             tools:text="ABCDEFGHIJKLMNOP" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/action_button"
-            style="@style/Widget.MaterialComponents.Button.Icon"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/colorCoral"
+            android:drawableEnd="@drawable/ic_action_web"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/colorGrey"
             android:paddingStart="16dp"
             android:paddingEnd="12dp"
             android:text="@string/action_web"
             android:textColor="@color/colorGrey"
             android:textStyle="bold"
-            app:icon="@drawable/ic_action_web"
-            app:iconGravity="end"
-            app:iconPadding="8dp"
-            app:iconTint="@color/colorGrey"
             app:layout_constraintBottom_toBottomOf="@id/logo_top_guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,5 +124,4 @@
             app:layout_constraintGuide_end="20dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

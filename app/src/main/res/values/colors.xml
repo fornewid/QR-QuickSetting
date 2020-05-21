@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#121212</color>
+    <color name="colorAccent">#1DE9B6</color>
+
     <!-- https://firebase.google.com/brand-guidelines -->
     <color name="colorBlue">#039BE5</color>
     <color name="colorNavy">#2C384A</color>
