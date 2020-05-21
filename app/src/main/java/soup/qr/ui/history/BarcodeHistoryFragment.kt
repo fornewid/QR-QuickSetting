@@ -8,25 +8,26 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import soup.qr.R
-import soup.qr.databinding.HistoryFragmentBinding
+import soup.qr.databinding.HistoryBinding
 import soup.qr.ui.EventObserver
 import soup.qr.ui.history.BarcodeHistoryFragmentDirections.Companion.actionToDetect
 import soup.qr.ui.history.BarcodeHistoryFragmentDirections.Companion.actionToHistoryDelete
 import soup.qr.ui.history.BarcodeHistoryFragmentDirections.Companion.actionToResult
-import soup.qr.utils.setOnDebounceClickListener
+import soup.qr.ui.setOnDebounceClickListener
 
-class BarcodeHistoryFragment : Fragment(R.layout.history_fragment) {
+class BarcodeHistoryFragment : Fragment(R.layout.history) {
 
     private val viewModel: BarcodeHistoryViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(HistoryFragmentBinding.bind(view)) {
+        with(HistoryBinding.bind(view)) {
             val listAdapter = BarcodeHistoryListAdapter(
                 clickListener = viewModel::onBarcodeHistoryClick,
                 longClickListener = viewModel::onBarcodeHistoryLongClick
             )
             listView.adapter = listAdapter
+
             detectButton.setOnDebounceClickListener {
                 viewModel.onDetectClick()
             }

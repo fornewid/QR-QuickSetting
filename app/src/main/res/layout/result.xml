@@ -39,7 +39,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/display_text"
@@ -71,57 +72,11 @@
             android:text="@string/action_web"
             android:textColor="@color/colorGrey"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/logo_top_guideline"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/display_text" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/logo_top_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="120dp" />
-
-        <ImageView
-            android:id="@+id/firebase"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="4dp"
-            android:src="@drawable/ic_logo_firebase"
-            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
-            app:layout_constraintEnd_toStartOf="@id/plus"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
-
-        <ImageView
-            android:id="@+id/plus"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_margin="8dp"
-            android:src="@drawable/ic_logo_add"
-            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
-            app:layout_constraintEnd_toStartOf="@id/ml_kit"
-            app:layout_constraintStart_toEndOf="@id/firebase"
-            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
-
-        <ImageView
-            android:id="@+id/ml_kit"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_logo_ml_kit"
-            app:layout_constraintBottom_toBottomOf="@id/logo_bottom_guideline"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/plus"
-            app:layout_constraintTop_toTopOf="@id/logo_top_guideline" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/logo_bottom_guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="20dp" />
+            app:layout_constraintTop_toBottomOf="@+id/display_text"
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

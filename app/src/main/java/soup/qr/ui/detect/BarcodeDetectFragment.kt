@@ -14,16 +14,16 @@ import soup.qr.R
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
 import soup.qr.core.detector.input.RawImage
-import soup.qr.databinding.FragmentDetectBinding
+import soup.qr.databinding.DetectBinding
 import soup.qr.model.Barcode
 import soup.qr.ui.EventObserver
 import soup.qr.ui.detect.BarcodeDetectFragmentDirections.Companion.actionToResult
 
-class BarcodeDetectFragment : Fragment(R.layout.fragment_detect) {
+class BarcodeDetectFragment : Fragment(R.layout.detect) {
 
     private val viewModel: BarcodeDetectViewModel by viewModels()
 
-    private var binding: FragmentDetectBinding? = null
+    private var binding: DetectBinding? = null
     private var hintAnimation: BarcodeDetectHintAnimation? = null
 
     private val detector: BarcodeDetector = FirebaseBarcodeDetector().apply {
@@ -42,7 +42,7 @@ class BarcodeDetectFragment : Fragment(R.layout.fragment_detect) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(FragmentDetectBinding.bind(view)) {
+        with(DetectBinding.bind(view)) {
             hintAnimation = BarcodeDetectHintAnimation(this)
 
             viewModel.showResultEvent.observe(viewLifecycleOwner, EventObserver {
@@ -69,7 +69,7 @@ class BarcodeDetectFragment : Fragment(R.layout.fragment_detect) {
         hintAnimation?.stop()
     }
 
-    private fun FragmentDetectBinding.startCamera() {
+    private fun DetectBinding.startCamera() {
         cameraView.bindToLifecycle(viewLifecycleOwner)
         cameraView.setAnalyzer { proxy ->
             proxy.use {

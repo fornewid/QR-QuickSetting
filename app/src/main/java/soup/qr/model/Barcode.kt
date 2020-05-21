@@ -1,10 +1,8 @@
 package soup.qr.model
 
 import android.os.Parcelable
-import androidx.annotation.Keep
 import kotlinx.android.parcel.Parcelize
 
-@Keep
 sealed class Barcode : Parcelable {
     abstract val format: Int
     abstract val rawValue: String

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/history"
         android:name="soup.qr.ui.history.BarcodeHistoryFragment"
-        tools:layout="@layout/history_fragment">
+        tools:layout="@layout/history">
 
         <action
             android:id="@+id/action_to_detect"
@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/detect"
         android:name="soup.qr.ui.detect.BarcodeDetectFragment"
-        tools:layout="@layout/fragment_detect">
+        tools:layout="@layout/detect">
 
         <action
             android:id="@+id/action_to_result"
@@ -56,7 +56,7 @@
     <fragment
         android:id="@+id/result"
         android:name="soup.qr.ui.result.BarcodeResultFragment"
-        tools:layout="@layout/fragment_result">
+        tools:layout="@layout/result">
 
         <argument
             android:name="barcode"
@@ -74,7 +74,7 @@
     <fragment
         android:id="@+id/magnified"
         android:name="soup.qr.ui.magnified.BarcodeMagnifiedFragment"
-        tools:layout="@layout/magnified_fragment">
+        tools:layout="@layout/magnified">
 
         <argument
             android:name="barcode"

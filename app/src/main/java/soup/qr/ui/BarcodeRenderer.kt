@@ -1,16 +1,13 @@
-package soup.qr.ui.history
+package soup.qr.ui
 
-import android.graphics.Bitmap
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import soup.qr.R
 import soup.qr.core.encoder.BarcodeImage
-import soup.qr.mapper.BarcodeFormatMapper
-import soup.qr.model.BarcodeHistory
 
-fun TextView.setBarcodeFormatText(barcode: BarcodeHistory) {
-    text = when (barcode.format) {
+fun TextView.setBarcodeFormatText(barcodeFormat: Int) {
+    text = when (barcodeFormat) {
         FirebaseVisionBarcode.FORMAT_CODE_128 -> "CODE_128"
         FirebaseVisionBarcode.FORMAT_CODE_39 -> "CODE_39"
         FirebaseVisionBarcode.FORMAT_CODE_93 -> "CODE_93"
@@ -28,12 +25,10 @@ fun TextView.setBarcodeFormatText(barcode: BarcodeHistory) {
     }
 }
 
-fun ImageView.setBarcodeImage(barcode: BarcodeHistory) {
-    fun imageOf(barcode: BarcodeHistory): Bitmap? {
-        val size = resources.getDimensionPixelSize(R.dimen.qr_code_size)
-        return BarcodeFormatMapper.zxingFormatOf(barcode.format)
-            ?.let(::BarcodeImage)
-            ?.create(barcode.rawValue, size)
+fun ImageView.setBarcodeImage(barcodeFormat: Int, barcodeRawValue: String) {
+    val size = resources.getDimensionPixelSize(R.dimen.qr_code_size)
+    val barcodeBitmap = zxingFormatOf(barcodeFormat)?.let {
+        BarcodeImage(it).create(barcodeRawValue, size)
     }
-    setImageBitmap(imageOf(barcode))
+    setImageBitmap(barcodeBitmap)
 }

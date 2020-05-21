@@ -3,10 +3,12 @@ package soup.qr.ui.history
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import soup.qr.databinding.HistoryItemBarcodeBinding
+import soup.qr.databinding.HistoryItemBinding
 import soup.qr.model.BarcodeHistory
 import soup.qr.ui.history.BarcodeHistoryListAdapter.BarcodeHistoryViewHolder
-import soup.qr.utils.setOnDebounceClickListener
+import soup.qr.ui.setBarcodeFormatText
+import soup.qr.ui.setBarcodeImage
+import soup.qr.ui.setOnDebounceClickListener
 
 class BarcodeHistoryListAdapter(
     private val clickListener: (BarcodeHistory) -> Unit,
@@ -17,7 +19,7 @@ class BarcodeHistoryListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BarcodeHistoryViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = HistoryItemBarcodeBinding.inflate(layoutInflater, parent, false)
+        val binding = HistoryItemBinding.inflate(layoutInflater, parent, false)
         return BarcodeHistoryViewHolder(binding).apply {
             itemView.setOnDebounceClickListener {
                 getItem(adapterPosition)?.run(clickListener)
@@ -48,13 +50,13 @@ class BarcodeHistoryListAdapter(
     }
 
     class BarcodeHistoryViewHolder(
-        private val binding: HistoryItemBarcodeBinding
+        private val binding: HistoryItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: BarcodeHistory?) {
             if (item != null) {
-                binding.barcodeImage.setBarcodeImage(item)
-                binding.barcodeTypeLabel.setBarcodeFormatText(item)
+                binding.barcodeImage.setBarcodeImage(item.format, item.rawValue)
+                binding.barcodeTypeLabel.setBarcodeFormatText(item.format)
                 binding.barcodeDisplayText.text = item.rawValue
             }
         }

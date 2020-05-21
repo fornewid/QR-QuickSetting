@@ -1,4 +1,4 @@
-package soup.qr.utils
+package soup.qr.ui
 
 import android.view.View
 

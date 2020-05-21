@@ -7,9 +7,9 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.animation.AccelerateDecelerateInterpolator
 import soup.qr.R
-import soup.qr.databinding.FragmentDetectBinding
+import soup.qr.databinding.DetectBinding
 
-class BarcodeDetectHintAnimation(private val binding: FragmentDetectBinding) {
+class BarcodeDetectHintAnimation(private val binding: DetectBinding) {
 
     private val alphaUpdateListener = ValueAnimator.AnimatorUpdateListener { animation ->
         val alpha = animation.animatedValue as Float
