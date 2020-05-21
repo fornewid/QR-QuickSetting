@@ -1,0 +1,7 @@
+-keepnames class soup.qr.model.Barcode
+-keepnames class soup.qr.model.Barcode
+-keepnames class soup.qr.ui.detect.BarcodeDetectFragment
+-keepnames class soup.qr.ui.history.BarcodeHistoryFragment
+-keepnames class soup.qr.ui.history.delete.BarcodeDeleteDialogFragment
+-keepnames class soup.qr.ui.magnified.BarcodeMagnifiedFragment
+-keepnames class soup.qr.ui.result.BarcodeResultFragment
