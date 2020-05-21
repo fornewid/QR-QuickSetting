@@ -5,22 +5,21 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import io.reactivex.Completable
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import soup.qr.data.local.entity.BarcodeHistoryEntity
 
 @Dao
 interface BarcodeDao {
 
     @Query("SELECT * FROM barcode_history ORDER BY datetime(last_detected_at) DESC")
-    fun getBarcode(): Observable<List<BarcodeHistoryEntity>>
+    fun getBarcode(): Flow<List<BarcodeHistoryEntity>>
 
     @Insert(onConflict = REPLACE)
-    fun insert(history: BarcodeHistoryEntity): Completable
+    suspend fun insert(history: BarcodeHistoryEntity)
 
     @Delete
-    fun delete(history: BarcodeHistoryEntity): Completable
+    suspend fun delete(history: BarcodeHistoryEntity)
 
     @Query("DELETE FROM barcode_history")
-    fun deleteAll(): Completable
+    suspend fun deleteAll()
 }

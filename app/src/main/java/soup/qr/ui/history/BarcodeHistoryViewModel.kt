@@ -1,13 +1,14 @@
 package soup.qr.ui.history
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import soup.qr.data.BarcodeRepository
 import soup.qr.model.Barcode
 import soup.qr.model.BarcodeHistory
-import soup.qr.ui.BaseViewModel
 import soup.qr.ui.EventLiveData
 import soup.qr.ui.MutableEventLiveData
 import timber.log.Timber
@@ -15,11 +16,11 @@ import javax.inject.Inject
 
 class BarcodeHistoryViewModel @Inject constructor(
     private val repository: BarcodeRepository
-) : BaseViewModel() {
+) : ViewModel() {
 
-    private val _uiModel = MutableLiveData<BarcodeHistoryUiModel>()
-    val uiModel: LiveData<BarcodeHistoryUiModel>
-        get() = _uiModel
+    val uiModel = repository.getHistories()
+        .map { BarcodeHistoryUiModel(it) }
+        .asLiveData()
 
     private val _showDetectEvent = MutableEventLiveData<Unit>()
     val showDetectEvent: EventLiveData<Unit>
@@ -37,13 +38,6 @@ class BarcodeHistoryViewModel @Inject constructor(
 
     init {
         Timber.d("init: 0x${hashCode().toString(16)}")
-        repository.getHistories()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                _uiModel.value = BarcodeHistoryUiModel(it)
-            }
-            .disposeOnCleared()
     }
 
     fun onDetectClick() {
@@ -61,11 +55,9 @@ class BarcodeHistoryViewModel @Inject constructor(
 
     fun onBarcodeHistoryDelete() {
         selectedHistory?.let {
-            repository.deleteHistory(it)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe()
-                .disposeOnCleared()
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deleteHistory(it)
+            }
         }
     }
 

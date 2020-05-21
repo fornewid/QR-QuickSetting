@@ -2,11 +2,11 @@ package soup.qr.ui.magnified
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import soup.qr.model.Barcode
-import soup.qr.ui.BaseViewModel
 import javax.inject.Inject
 
-class BarcodeMagnifiedViewModel @Inject constructor() : BaseViewModel() {
+class BarcodeMagnifiedViewModel @Inject constructor() : ViewModel() {
 
     private val _uiModel = MutableLiveData<Barcode>()
     val uiModel: LiveData<Barcode>

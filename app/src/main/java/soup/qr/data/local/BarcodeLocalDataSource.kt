@@ -1,14 +1,13 @@
 package soup.qr.data.local
 
-import io.reactivex.Completable
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import soup.qr.model.BarcodeHistory
 
 interface BarcodeLocalDataSource {
 
-    fun getHistories(): Observable<List<BarcodeHistory>>
+    fun getHistories(): Flow<List<BarcodeHistory>>
 
-    fun addHistory(history: BarcodeHistory): Completable
+    suspend fun addHistory(history: BarcodeHistory)
 
-    fun deleteHistory(history: BarcodeHistory): Completable
+    suspend fun deleteHistory(history: BarcodeHistory)
 }
