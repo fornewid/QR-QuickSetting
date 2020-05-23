@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.threeten.bp.OffsetDateTime
 import soup.qr.Dependency
 import soup.qr.data.BarcodeRepository
 import soup.qr.model.Barcode
@@ -22,7 +21,7 @@ class BarcodeDetectViewModel(
 
     fun onDetected(barcode: Barcode) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addHistory(BarcodeHistory(barcode.format, barcode.rawValue, OffsetDateTime.now()))
+            repository.addHistory(BarcodeHistory(barcode.format, barcode.rawValue, System.currentTimeMillis()))
             _showResultEvent.postEvent(barcode)
         }
     }
