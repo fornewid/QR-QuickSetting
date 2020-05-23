@@ -34,12 +34,10 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         setCallback(object : BarcodeDetector.Callback {
 
             override fun onDetected(barcode: Barcode) {
-                hintAnimation?.onSuccess()
                 viewModel.onDetected(barcode)
             }
 
             override fun onDetectFailed() {
-                hintAnimation?.onError()
             }
         })
     }
