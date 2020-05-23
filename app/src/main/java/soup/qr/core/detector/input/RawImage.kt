@@ -6,34 +6,24 @@ import android.media.Image
 import android.net.Uri
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-interface RawImage {
-    fun toBitmap(): Bitmap
-}
-
-fun rawImageOf(image: Image, rotationDegrees: Int): RawImage {
-    return object : RawImage {
-
-        override fun toBitmap(): Bitmap {
-            return FirebaseVisionImage.fromMediaImage(image, rotation()).bitmap
-        }
-
-        private fun rotation(): Int {
-            return when (rotationDegrees) {
-                0 -> FirebaseVisionImageMetadata.ROTATION_0
-                90 -> FirebaseVisionImageMetadata.ROTATION_90
-                180 -> FirebaseVisionImageMetadata.ROTATION_180
-                270 -> FirebaseVisionImageMetadata.ROTATION_270
-                else -> FirebaseVisionImageMetadata.ROTATION_0
-            }
+fun bitmapOf(image: Image, rotationDegrees: Int): Bitmap {
+    fun rotation(): Int {
+        return when (rotationDegrees) {
+            0 -> FirebaseVisionImageMetadata.ROTATION_0
+            90 -> FirebaseVisionImageMetadata.ROTATION_90
+            180 -> FirebaseVisionImageMetadata.ROTATION_180
+            270 -> FirebaseVisionImageMetadata.ROTATION_270
+            else -> FirebaseVisionImageMetadata.ROTATION_0
         }
     }
+    return FirebaseVisionImage.fromMediaImage(image, rotation()).bitmap
 }
 
-fun rawImageOf(context: Context, fileUri: Uri): RawImage {
-    return object : RawImage {
-        override fun toBitmap(): Bitmap {
-            return FirebaseVisionImage.fromFilePath(context, fileUri).bitmap
-        }
+suspend fun bitmapOf(context: Context, fileUri: Uri): Bitmap {
+    return withContext(Dispatchers.IO) {
+        FirebaseVisionImage.fromFilePath(context, fileUri).bitmap
     }
 }

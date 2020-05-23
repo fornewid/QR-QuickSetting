@@ -10,13 +10,14 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import soup.qr.R
 import soup.qr.core.detector.BarcodeDetector
 import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
-import soup.qr.core.detector.input.rawImageOf
+import soup.qr.core.detector.input.bitmapOf
 import soup.qr.databinding.DetectBinding
-import soup.qr.model.Barcode
 import soup.qr.ui.EventObserver
 import soup.qr.ui.detect.BarcodeDetectFragmentDirections.Companion.actionToResult
 import soup.qr.ui.setOnDebounceClickListener
@@ -30,17 +31,7 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
     private var binding: DetectBinding? = null
     private var hintAnimation: BarcodeDetectHintAnimation? = null
 
-    private val detector: BarcodeDetector = FirebaseBarcodeDetector().apply {
-        setCallback(object : BarcodeDetector.Callback {
-
-            override fun onDetected(barcode: Barcode) {
-                viewModel.onDetected(barcode)
-            }
-
-            override fun onDetectFailed() {
-            }
-        })
-    }
+    private val detector: BarcodeDetector = FirebaseBarcodeDetector()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -80,9 +71,12 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         cameraView.bindToLifecycle(viewLifecycleOwner)
         cameraView.setAnalyzer { proxy ->
             proxy.use {
-                it.image?.use { image ->
-                    if (detector.isInDetecting().not()) {
-                        detector.detect(rawImageOf(image, it.imageInfo.rotationDegrees))
+                if (detector.isInDetecting().not()) {
+                    it.image?.use { image ->
+                        val bitmap = bitmapOf(image, it.imageInfo.rotationDegrees)
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.onDetected(detector.detect(bitmap))
+                        }
                     }
                 }
             }
@@ -123,7 +117,10 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         super.onActivityResult(requestCode, resultCode, data)
         Gallery.onPictureTaken(requestCode, resultCode, data) {
             if (detector.isInDetecting().not()) {
-                detector.detect(rawImageOf(requireContext(), it))
+                viewLifecycleOwner.lifecycleScope.launch {
+                    detector.detect(bitmapOf(requireContext(), it))
+                        ?.let { viewModel.onDetected(it) }
+                }
             }
         }
     }

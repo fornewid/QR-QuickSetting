@@ -4,10 +4,16 @@ import android.graphics.Bitmap
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import soup.qr.core.detector.BarcodeDetector
-import soup.qr.core.detector.input.RawImage
 import soup.qr.model.Barcode
+import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class FirebaseBarcodeDetector : BarcodeDetector {
 
@@ -15,99 +21,69 @@ class FirebaseBarcodeDetector : BarcodeDetector {
 
     private val isInDetecting = AtomicBoolean(false)
 
-    private var callback: BarcodeDetector.Callback? = null
-
     // workaround
     private var lastDetectTime: Long = 0
-
-    override fun setCallback(callback: BarcodeDetector.Callback?) {
-        this.callback = callback
-    }
 
     override fun isInDetecting(): Boolean {
         return isInDetecting.get() || hasAftertasteYet()
     }
 
-    override fun detect(image: RawImage)  {
-        if (isInDetecting.compareAndSet(false, true)) {
-            fun complete() {
-                recordDetectTime()
-                isInDetecting.set(false)
-            }
-            val bitmap = image.toBitmap()
-            detectIn(bitmap,
-                onSuccess = {
-                    val barcode = it.firstOrNull()
-                    if (barcode != null) {
-                        callback?.onDetected(barcode)
-                        complete()
-                    } else {
-                        detectIn(bitmap.inverted(),
-                            onSuccess = {
-                                val barcode = it.firstOrNull()
-                                if (barcode != null) {
-                                    callback?.onDetected(barcode)
-                                } else {
-                                    callback?.onDetectFailed()
-                                }
-                                complete()
-                            },
-                            onError = {
-                                callback?.onDetectFailed()
-                                complete()
-                            }
-                        )
-                    }
-                },
-                onError = {
-                    callback?.onDetectFailed()
-                    complete()
+    override suspend fun detect(bitmap: Bitmap): Barcode? {
+        return if (isInDetecting.compareAndSet(false, true)) {
+            withContext(Dispatchers.Default) {
+                val original = async { detectIn(bitmap) }
+                val inverted = async { detectIn(bitmap.inverted()) }
+                try {
+                    (original.await() + inverted.await()).firstOrNull()
+                } catch (throwable: Throwable) {
+                    Timber.w(throwable)
+                    null
+                } finally {
+                    lastDetectTime = System.currentTimeMillis()
+                    isInDetecting.set(false)
                 }
-            )
+            }
+        } else {
+            null
         }
     }
 
-    private inline fun detectIn(
-        bitmap: Bitmap,
-        crossinline onSuccess: (List<Barcode>) -> Unit,
-        crossinline onError: (Throwable) -> Unit
-    ) {
-        coreDetector
-            .detectInImage(FirebaseVisionImage.fromBitmap(bitmap))
-            .addOnSuccessListener {
-                it.mapNotNull { barcode ->
-                    when (barcode.valueType) {
-                        FirebaseVisionBarcode.TYPE_URL ->
-                            Barcode.Url(
-                                format = barcode.format,
-                                rawValue = barcode.rawValue.orEmpty(),
-                                url = barcode.rawValue.orEmpty()
-                            )
-                        FirebaseVisionBarcode.TYPE_TEXT ->
-                            Barcode.Text(
-                                format = barcode.format,
-                                rawValue = barcode.rawValue.orEmpty()
-                            )
-                        else ->
-                            Barcode.Unknown(
-                                format = barcode.format,
-                                rawValue = barcode.rawValue.orEmpty()
-                            )
+    private suspend fun detectIn(bitmap: Bitmap): List<Barcode> {
+        return suspendCoroutine { continuation ->
+            coreDetector
+                .detectInImage(FirebaseVisionImage.fromBitmap(bitmap))
+                .addOnSuccessListener {
+                    val barcodes = it.mapNotNull { barcode ->
+                        when (barcode.valueType) {
+                            FirebaseVisionBarcode.TYPE_URL ->
+                                Barcode.Url(
+                                    format = barcode.format,
+                                    rawValue = barcode.rawValue.orEmpty(),
+                                    url = barcode.rawValue.orEmpty()
+                                )
+                            FirebaseVisionBarcode.TYPE_TEXT ->
+                                Barcode.Text(
+                                    format = barcode.format,
+                                    rawValue = barcode.rawValue.orEmpty()
+                                )
+                            else ->
+                                Barcode.Unknown(
+                                    format = barcode.format,
+                                    rawValue = barcode.rawValue.orEmpty()
+                                )
+                        }
                     }
-                }.run(onSuccess)
-            }
-            .addOnFailureListener {
-                onError(it)
-            }
+                    continuation.resume(barcodes)
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
+                }
+        }
     }
 
     private fun hasAftertasteYet(): Boolean {
         val now = System.currentTimeMillis()
         return now - lastDetectTime < AFTERTASTE_INTERVAL
-    }
-
-    private fun recordDetectTime() {
-        lastDetectTime = System.currentTimeMillis()
     }
 
     companion object {

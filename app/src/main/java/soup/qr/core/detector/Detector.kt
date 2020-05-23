@@ -1,10 +1,10 @@
 package soup.qr.core.detector
 
-import soup.qr.core.detector.input.RawImage
+import android.graphics.Bitmap
 
-interface Detector {
+interface Detector<T: Any> {
 
-    fun detect(image: RawImage)
+    suspend fun detect(bitmap: Bitmap): T?
 
     fun isInDetecting(): Boolean
 }

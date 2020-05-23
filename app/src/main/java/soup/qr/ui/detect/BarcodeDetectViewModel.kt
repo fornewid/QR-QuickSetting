@@ -19,9 +19,16 @@ class BarcodeDetectViewModel(
     val showResultEvent: EventLiveData<Barcode>
         get() = _showResultEvent
 
-    fun onDetected(barcode: Barcode) {
+    fun onDetected(barcode: Barcode?) {
+        barcode ?: return
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addHistory(BarcodeHistory(barcode.format, barcode.rawValue, System.currentTimeMillis()))
+            repository.addHistory(
+                BarcodeHistory(
+                    barcode.format,
+                    barcode.rawValue,
+                    System.currentTimeMillis()
+                )
+            )
             _showResultEvent.postEvent(barcode)
         }
     }
