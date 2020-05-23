@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.detect.BarcodeDetectFragment">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/toolbar_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="60dp" />
+
     <androidx.camera.view.CameraView
         android:id="@+id/camera_view"
         android:layout_width="0dp"
@@ -17,6 +24,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lensFacing="back"
         app:pinchToZoomEnabled="true" />
+
+    <ImageView
+        android:id="@+id/pick_image_button"
+        android:layout_width="60dp"
+        android:layout_height="0dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/detect_gallery"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_gallery"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/qr_hint"
