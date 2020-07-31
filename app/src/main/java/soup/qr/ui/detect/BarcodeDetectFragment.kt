@@ -73,9 +73,10 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
             proxy.use {
                 if (detector.isInDetecting().not()) {
                     it.image?.use { image ->
-                        val bitmap = bitmapOf(image, it.imageInfo.rotationDegrees)
                         viewLifecycleOwner.lifecycleScope.launch {
-                            viewModel.onDetected(detector.detect(bitmap))
+                            bitmapOf(image, it.imageInfo.rotationDegrees)?.let { bitmap ->
+                                viewModel.onDetected(detector.detect(bitmap))
+                            }
                         }
                     }
                 }
@@ -118,7 +119,8 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         Gallery.onPictureTaken(requestCode, resultCode, data) {
             if (detector.isInDetecting().not()) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    detector.detect(bitmapOf(requireContext(), it))
+                    bitmapOf(requireContext(), it)
+                        ?.let { detector.detect(it) }
                         ?.let { viewModel.onDetected(it) }
                 }
             }

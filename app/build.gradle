@@ -51,8 +51,8 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    viewBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -83,9 +83,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
 
     implementation 'com.google.firebase:firebase-core:17.4.4'
-    implementation 'com.google.firebase:firebase-ml-vision:24.0.3'
-    implementation 'com.google.firebase:firebase-ml-vision-barcode-model:16.1.1'
     implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:16.1.1'
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 
     def room_version = "2.2.5"
