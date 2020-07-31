@@ -16,6 +16,8 @@ android {
         versionCode 22
         versionName "0.2.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("boolean", "USE_STRICT_MODE", "false")
     }
     signingConfigs {
         release {
