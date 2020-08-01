@@ -1,7 +1,6 @@
 package soup.qr.ui.detect
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -66,22 +65,21 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         hintAnimation?.stop()
     }
 
-    @SuppressLint("UnsafeExperimentalUsageError")
     private fun DetectBinding.startCamera() {
         cameraView.bindToLifecycle(viewLifecycleOwner)
-        cameraView.setAnalyzer { proxy ->
-            proxy.use {
-                if (detector.isInDetecting().not()) {
-                    it.image?.use { image ->
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            bitmapOf(image, it.imageInfo.rotationDegrees)?.let { bitmap ->
-                                viewModel.onDetected(detector.detect(bitmap))
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        cameraView.setAnalyzer { proxy ->
+//            proxy.use {
+//                if (detector.isInDetecting().not()) {
+//                    it.image?.use { image ->
+//                        viewLifecycleOwner.lifecycleScope.launch {
+//                            bitmapOf(image, it.imageInfo.rotationDegrees)?.let { bitmap ->
+//                                viewModel.onDetected(detector.detect(bitmap))
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onRequestPermissionsResult(
