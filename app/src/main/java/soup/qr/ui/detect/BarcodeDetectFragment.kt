@@ -7,22 +7,29 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import kotlinx.coroutines.launch
+import com.google.mlkit.vision.common.InputImage
 import soup.qr.R
 import soup.qr.core.detector.BarcodeDetector
-import soup.qr.core.detector.firebase.FirebaseBarcodeDetector
-import soup.qr.core.detector.input.bitmapOf
+import soup.qr.core.detector.firebase.MLKitBarcodeDetector
 import soup.qr.databinding.DetectBinding
 import soup.qr.ui.EventObserver
 import soup.qr.ui.detect.BarcodeDetectFragmentDirections.Companion.actionToResult
 import soup.qr.ui.setOnDebounceClickListener
 import soup.qr.util.Gallery
+import soup.qr.util.ScopedExecutor
+import soup.qr.util.toBitmap
 import soup.qr.util.toast
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class BarcodeDetectFragment : Fragment(R.layout.detect) {
 
@@ -31,10 +38,21 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
     private var binding: DetectBinding? = null
     private var hintAnimation: BarcodeDetectHintAnimation? = null
 
-    private val detector: BarcodeDetector = FirebaseBarcodeDetector()
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var scopedExecutor: ScopedExecutor
+    private var barcodeDetector: BarcodeDetector? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        cameraExecutor = Executors.newCachedThreadPool()
+        scopedExecutor = ScopedExecutor(cameraExecutor)
+        barcodeDetector = MLKitBarcodeDetector(
+            viewLifecycleOwner,
+            cameraExecutor,
+            onDetected = { viewModel.onDetected(it) }
+        )
+
         with(DetectBinding.bind(view)) {
             hintAnimation = BarcodeDetectHintAnimation(this)
 
@@ -49,7 +67,7 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
             binding = this
 
             if (view.context.checkPermissionsGranted(CAMERA_PERMISSION)) {
-                startCamera()
+                bindCameraUseCases()
             } else {
                 requestPermissions(CAMERA_PERMISSION, REQUEST_CODE_CAMERA)
             }
@@ -66,22 +84,59 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         hintAnimation?.stop()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scopedExecutor.shutdown()
+    }
+
     @SuppressLint("UnsafeExperimentalUsageError")
-    private fun DetectBinding.startCamera() {
-        cameraView.bindToLifecycle(viewLifecycleOwner)
-        cameraView.setAnalyzer { proxy ->
-            proxy.use {
-                if (detector.isInDetecting().not()) {
-                    it.image?.use { image ->
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            bitmapOf(image, it.imageInfo.rotationDegrees)?.let { bitmap ->
-                                viewModel.onDetected(detector.detect(bitmap))
-                            }
+    private fun DetectBinding.bindCameraUseCases() = viewFinder.post {
+        val context = root.context
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        cameraProviderFuture.addListener(Runnable {
+
+            val cameraProvider = cameraProviderFuture.get()
+
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(viewFinder.display.rotation)
+                .build()
+
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_4_3)
+                .setTargetRotation(viewFinder.display.rotation)
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+
+            imageAnalysis.setAnalyzer(
+                scopedExecutor, ImageAnalysis.Analyzer { proxy ->
+                    proxy.use {
+                        val bitmap = proxy.image?.use { it.toBitmap() }
+                        if (bitmap != null) {
+                            barcodeDetector?.detect(
+                                InputImage.fromBitmap(bitmap, proxy.imageInfo.rotationDegrees)
+                            )
                         }
                     }
                 }
-            }
-        }
+            )
+
+            val cameraSelector = CameraSelector.Builder()
+                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                .build()
+
+            cameraProvider.unbindAll()
+            cameraProvider.bindToLifecycle(
+                viewLifecycleOwner,
+                cameraSelector,
+                preview,
+                imageAnalysis
+            )
+
+            // Use the camera object to link our preview use case with the view
+            preview.setSurfaceProvider(viewFinder.createSurfaceProvider())
+
+        }, ContextCompat.getMainExecutor(context))
     }
 
     override fun onRequestPermissionsResult(
@@ -93,7 +148,7 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
         when (requestCode) {
             REQUEST_CODE_CAMERA -> {
                 if (context.checkPermissionsGranted(CAMERA_PERMISSION)) {
-                    binding?.startCamera()
+                    binding?.bindCameraUseCases()
                 } else {
                     context.toast("Permissions not granted by the user.")
                 }
@@ -116,14 +171,8 @@ class BarcodeDetectFragment : Fragment(R.layout.detect) {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Gallery.onPictureTaken(requestCode, resultCode, data) {
-            if (detector.isInDetecting().not()) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    bitmapOf(requireContext(), it)
-                        ?.let { detector.detect(it) }
-                        ?.let { viewModel.onDetected(it) }
-                }
-            }
+        Gallery.onPictureTaken(requestCode, resultCode, data) { uri ->
+            barcodeDetector?.detect(InputImage.fromFilePath(requireContext(), uri))
         }
     }
 

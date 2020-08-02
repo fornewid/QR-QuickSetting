@@ -1,5 +1,8 @@
 package soup.qr.core.detector
 
-import soup.qr.model.Barcode
+import com.google.mlkit.vision.common.InputImage
 
-interface BarcodeDetector : Detector<Barcode>
+interface BarcodeDetector {
+
+    fun detect(inputImage: InputImage)
+}
