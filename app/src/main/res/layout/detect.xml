@@ -13,17 +13,14 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="60dp" />
 
-    <androidx.camera.view.CameraView
-        android:id="@+id/camera_view"
+    <androidx.camera.view.PreviewView
+        android:id="@+id/view_finder"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:captureMode="image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:lensFacing="back"
-        app:pinchToZoomEnabled="true" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/pick_image_button"
